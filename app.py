@@ -179,7 +179,6 @@ app.layout = dbc.Container([
     fluid=True,
     style={'display': 'flex'},
     className='dashboard-container')
-
         
 
 @app.callback(
