@@ -113,39 +113,14 @@ app.layout = dbc.Container([
     html.Div([
         html.Div([
             html.H1(["Daily Revenue & Mileage"]),
-            html.P(["Manhattan Yellow Cabs,", html.Br(), "2011-2024"], id='subhead-text')],
-            style={
-                "vertical-alignment": "top",
-                "height": 155,
-                "width": 500
-            }),
+            html.P(["Manhattan Yellow Cabs,", html.Br(), "2011-2024"],
+                   id='subhead-text')
+        ], style={
+            "vertical-alignment": "top",
+            "height": 155,
+            "width": 500
+        }),
 
-        # GitHub link placed just below the subtitle (but above the radio buttons)
-        html.Div(
-            id='github-link',
-            style={
-                'textAlign': 'center',
-                'marginTop': '20px',
-            },
-            children=[
-                html.A(
-                    "GitHub Repo", 
-                    href="https://github.com/laidleyt/tlc_trips",  
-                    target="_blank", 
-                    style={
-                        'padding': '10px 20px',
-                        'backgroundColor': '#007BFF',
-                        'color': 'white',
-                        'borderRadius': '5px',
-                        'textDecoration': 'none',
-                        'fontSize': '16px',
-                        'fontWeight': 'bold',
-                    }
-                )
-            ]
-        ),
-        
-        # Radio buttons and dropdown
         html.Div([
             html.Div(dbc.RadioItems(
                 id='data-select',
@@ -154,32 +129,36 @@ app.layout = dbc.Container([
                 labelClassName="btn btn-outline-light",
                 labelCheckedClassName="btn btn-light",
                 options=[
-                    {"label": "Revenue", "value": "fares"}, 
-                    {"label": "Mileage", "value": "mileage"}
-                ],
+                    {"label": "Revenue", "value": "fares"},
+                    {"label": "Mileage", "value": "mileage"}],
                 value="fares"
-            ),
-            style={'width': 160}),
+            ), style={'width': 160}),
             html.Div(style={'width': 160})
-        ], style={'margin-left': 15, 'margin-right': 15, 'display': 'flex'}),
+        ], style={
+            'margin-left': 15,
+            'margin-right': 15,
+            'display': 'flex'
+        }),
 
-        # Dropdown for selecting graph type
         html.Div([
             html.H2('Group Category:'),
             dcc.Dropdown(id='graph-type',
-                options=[
-                    {'label': 'Form of Payment: Cash/Credit', 'value': 'paytype'}, 
-                    {'label': 'Vendor: Creative Mobile Tech (CMT)/Curb', 'value': 'vendorid'}, 
-                    {'label': 'Destination: In-City/Suburb/JFK/EWR', 'value': 'ratecode'}
-                ],
-                value='paytype',
-                clearable=False,
-                optionHeight=40,
-                className='customDropdown')],
-            style={'width': 420, 'margin-left': 15, 'margin-top': 15, 'margin-bottom': 35}
-        ),
+                         options=[
+                             {'label': 'Form of Payment: Cash/Credit', 'value': 'paytype'},
+                             {'label': 'Vendor: Creative Mobile Tech (CMT)/Curb', 'value': 'vendorid'},
+                             {'label': 'Destination: In-City/Suburb/JFK/EWR', 'value': 'ratecode'}
+                         ],
+                         value='paytype',
+                         clearable=False,
+                         optionHeight=40,
+                         className='customDropdown')
+        ], style={
+            'width': 420,
+            'margin-left': 15,
+            'margin-top': 15,
+            'margin-bottom': 35
+        }),
 
-        # Graph Display Area
         html.Div(
             id='graph-wrapper',
             style={
@@ -193,19 +172,43 @@ app.layout = dbc.Container([
                 dcc.Graph(
                     id='interactive-graph',
                     style={
-                        'minWidth': '600px',   
-                        'height': '400px'       
+                        'minWidth': '600px',
+                        'height': '400px'
                     },
                     config={'responsive': True}
                 )
             ]
+        ),
+
+        html.Div(
+            id='github-link',
+            style={
+                'textAlign': 'center',
+                'marginTop': '20px',
+            },
+            children=[
+                html.A(
+                    "GitHub Repo",
+                    href="https://github.com/laidleyt/tlc_trips",
+                    target="_blank",
+                    style={
+                        'padding': '10px 20px',
+                        'backgroundColor': '#007BFF',
+                        'color': 'white',
+                        'borderRadius': '5px',
+                        'textDecoration': 'none',
+                        'fontSize': '16px',
+                        'fontWeight': 'bold',
+                    }
+                )
+            ]
         )
-    ]),
+    ])
+],  
     fluid=True,
     style={'display': 'flex'},
     className='dashboard-container'
 )
-
         
 
 @app.callback(
