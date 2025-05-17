@@ -1,11 +1,13 @@
+/* General body styling */
 body {
     background-color: #4a6178;
-    overflow-x: hidden;
+    overflow-x: hidden;  /* Avoid horizontal scrolling */
 }
 
+/* Dashboard container */
 .dashboard-container {
     max-width: 95vw;
-    height: 900px;
+    height: auto;  /* Set height to auto for flexibility */
     margin-left: auto;
     margin-right: auto;
     margin-top: 20px;
@@ -13,15 +15,22 @@ body {
     background-color: #515163;
     border: 1px solid #cccccc;
     border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
 }
 
+/* Title h1 */
 h1 {
     font-family: "Poppins"; 
     color: #ffffff; 
     font-size: 35px;
     margin: 15px;
+    text-align: center;
 }
 
+/* Paragraph styling */
 p {
     font-family: "Poppins";
     color: #CFFF04;
@@ -31,7 +40,6 @@ p {
 }
 
 /* Radio-buttons */
-
 .form-check {
     width: 100%;
     height: 38px;
@@ -39,6 +47,7 @@ p {
     padding-left: 0;
 }
 
+/* Button styling */
 .btn.btn-outline-light,
 .btn.btn-light {
     width: 100%;
@@ -48,15 +57,13 @@ p {
     border-radius: 3px;
 }
 
-.btn.btn-outline-light {
-    border: 1px solid transparent;
-}
-
+/* Button hover effect */
 .btn.btn-outline-light:hover {
     color: #010103;
     background-color: color-mix(in srgb, var(--bs-light), #010103 50%);
 }
 
+/* Subtitle styling h2 */
 h2 {
     margin-bottom: 0px;
     margin-top: 10px;
@@ -65,19 +72,77 @@ h2 {
     color: #ffffff;
 }
 
-/* Dropdowns */
-
+/* Custom dropdown styling */
 .customDropdown {
     font-size: 16px;
     font-family: "Poppins";
     padding-left: 1px;
+    width: 100%;  /* Make dropdown fill available space */
 }
 
+/* Graph wrapper */
 #graph-wrapper {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
-    width: 100vw;
+    width: 100vw;  /* Ensure full width */
     padding: 1rem;
     box-sizing: border-box;
 }
 
+/* Mobile responsiveness (Max-width: 768px) */
+@media only screen and (max-width: 768px) {
+    /* Dashboard container adjusts for smaller screens */
+    .dashboard-container {
+        max-width: 100%;  /* Full width on small screens */
+        padding: 10px;
+    }
+
+    /* Adjust graph wrapper for mobile */
+    #graph-wrapper {
+        width: 100%;
+        overflow-x: hidden;  /* Hide horizontal scroll on small screens */
+    }
+
+    /* Make graphs more mobile-friendly */
+    #interactive-graph {
+        width: 100%;
+        height: 400px;  /* Adjust height for mobile */
+    }
+
+    /* Title size adjustment */
+    h1 {
+        font-size: 1.5em;  /* Smaller title for mobile */
+    }
+
+    /* Adjust paragraph text size for mobile */
+    p {
+        font-size: 14px;  /* Make paragraph text smaller */
+    }
+
+    /* Adjust radio buttons and dropdown for better alignment */
+    .form-check {
+        width: 100%;
+    }
+
+    /* Stack radio buttons vertically on smaller screens */
+    .btn-group {
+        display: block;
+        margin-bottom: 10px;
+    }
+
+    /* Ensure dropdown takes full width */
+    .customDropdown {
+        width: 100%;
+    }
+
+    /* Subtitle size adjustment */
+    h2 {
+        font-size: 1em;  /* Make subtitles smaller on mobile */
+    }
+
+    /* Make buttons responsive */
+    .btn.btn-outline-light,
+    .btn.btn-light {
+        width: 100%;  /* Ensure buttons take full width */
+    }
+}
