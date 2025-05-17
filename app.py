@@ -174,8 +174,30 @@ app.layout = dbc.Container([
                                             config={'responsive': True}
                                         )
                                     ]
-                                )
-])],
+                                ),
+              html.Div(
+            id='github-link',
+            style={
+                'textAlign': 'center',
+                'marginTop': '20px',
+            },
+            children=[
+                html.A(
+                    "GitHub Repo", 
+                    href="https://github.com/laidleyt/tlc_trips",  
+                    target="_blank", 
+                    style={
+                        'padding': '10px 20px',
+                        'backgroundColor': '#007BFF',
+                        'color': 'white',
+                        'borderRadius': '5px',
+                        'textDecoration': 'none',
+                        'fontSize': '16px',
+                        'fontWeight': 'bold',
+                    }
+                )
+            ]
+        ),
     fluid=True,
     style={'display': 'flex'},
     className='dashboard-container')
