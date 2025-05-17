@@ -110,75 +110,100 @@ fig_mileage_vendorid = create_area_chart(dfmile, 'daily_miles', 'vendorid', face
 app = Dash(__name__, external_stylesheets=[dbc.themes.FLATLY])
 
 app.layout = dbc.Container([
-    html.Div([html.Div([
-                        html.H1(["Daily Revenue & Mileage"]),
-                        html.P(["Manhattan Yellow Cabs,", html.Br(),"2011-2024"],
-                               id='subhead-text')],
-                            style={
-                                "vertical-alignment":"top",
-                                "height":155,
-                                "width":500}), 
-              html.Div([
-                       html.Div(dbc.RadioItems(
-                                   id='data-select',
-                                   className='btn-group',
-                                   inputClassName='btn-check',
-                                   labelClassName="btn btn-outline-light",
-                                   labelCheckedClassName="btn btn-light",
-                                   options=[
-                                           {"label": "Revenue", "value": "fares"}, 
-                                           {"label": "Mileage", "value": "mileage"}],
-                                   value="fares"
-                                   ),
-                                       style={'width': 160}),
-                                       html.Div(style={'width': 160})
-                                   ],
-                                      style={
-                                              'margin-left': 15,
-                                              'margin-right': 15,
-                                              'display': 'flex'}),
-              html.Div([
-                      html.H2('Group Category:'),
-                      dcc.Dropdown(id='graph-type',
-                          options=[
-                                    {'label': 'Form of Payment: Cash/Credit', 'value': 'paytype'}, 
-                                    {'label': 'Vendor: Creative Mobile Tech (CMT)/Curb', 'value': 'vendorid'}, 
-                                    {'label': 'Destination: In-City/Suburb/JFK/EWR', 'value': 'ratecode'}
-                                    ],
-                                        value= 'paytype',
-                                        clearable=False,
-                                        optionHeight=40,
-                                        className='customDropdown')],
-                                      style={
-                                             'width': 420,
-                                             'margin-left': 15,
-                                             'margin-top': 15,
-                                             'margin-bottom': 35} ,
-                                      ),
-                                html.Div(
-                                    id='graph-wrapper',
-                                    style={
-                                        'overflowX': 'auto',
-                                        'width': '80vw',  # Take up 80% viewport width
-                                        'padding': '1rem',
-                                        'boxSizing': 'border-box',
-                                        'marginTop':'7rem'
-                                    },
-                                    children=[
-                                        dcc.Graph(
-                                            id='interactive-graph',
-                                            style={
-                                                'minWidth': '600px',   
-                                                'height': '400px'       
-                                            },
-                                            config={'responsive': True}
-                                        )
-                                    ]
-                                )
-])],
-    fluid=True,
-    style={'display': 'flex'},
-    className='dashboard-container')
+    html.Div([
+
+        # Header & Subtitle
+        html.Div([
+            html.H1("Daily Revenue & Mileage"),
+            html.P(["Manhattan Yellow Cabs,", html.Br(), "2011-2024"],
+                   id='subhead-text')
+        ], style={
+            "verticalAlign": "top",
+            "height": "auto",
+            "width": "100%",
+            "maxWidth": "500px",
+            "margin": "10px auto"
+        }),
+
+        # Radio Buttons
+        html.Div([
+            html.Div(dbc.RadioItems(
+                id='data-select',
+                className='btn-group',
+                inputClassName='btn-check',
+                labelClassName="btn btn-outline-light",
+                labelCheckedClassName="btn btn-light",
+                options=[
+                    {"label": "Revenue", "value": "fares"},
+                    {"label": "Mileage", "value": "mileage"}
+                ],
+                value="fares"
+            ), style={
+                'width': '100%',
+                'maxWidth': '160px',
+                'margin': '0 10px 10px 10px'
+            }),
+        ], style={
+            'display': 'flex',
+            'flexWrap': 'wrap',
+            'justifyContent': 'center'
+        }),
+
+        # Dropdown Menu
+        html.Div([
+            html.H2('Group Category:'),
+            dcc.Dropdown(
+                id='graph-type',
+                options=[
+                    {'label': 'Form of Payment: Cash/Credit', 'value': 'paytype'},
+                    {'label': 'Vendor: Creative Mobile Tech (CMT)/Curb', 'value': 'vendorid'},
+                    {'label': 'Destination: In-City/Suburb/JFK/EWR', 'value': 'ratecode'}
+                ],
+                value='paytype',
+                clearable=False,
+                optionHeight=40,
+                className='customDropdown'
+            )
+        ], style={
+            'width': '100%',
+            'maxWidth': '420px',
+            'marginLeft': '10px',
+            'marginTop': '10px',
+            'marginBottom': '35px'
+        }),
+
+        # Graph Area
+        html.Div(
+            id='graph-wrapper',
+            style={
+                'overflowX': 'auto',
+                'width': '100%',
+                'maxWidth': '100vw',
+                'padding': '1rem',
+                'boxSizing': 'border-box',
+                'marginTop': '3rem'
+            },
+            children=[
+                dcc.Graph(
+                    id='interactive-graph',
+                    style={
+                        'minWidth': '600px',
+                        'height': '400px'
+                    },
+                    config={'responsive': True}
+                )
+            ]
+        )
+
+    ])
+], fluid=True, className='dashboard-container', style={
+    'display': 'flex',
+    'flexDirection': 'column',
+    'alignItems': 'center',
+    'padding': '0 1rem',
+    'boxSizing': 'border-box'
+})
+
         
 
 @app.callback(
