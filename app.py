@@ -14,7 +14,7 @@ import dash_bootstrap_components as dbc
 from dash import Input, Output
 
 
-df2 = pd.read_csv('tlc_data.csv')  # read in summarized time series data
+df2 = pd.read_csv('data/tlc_data.csv')  # read in summarized time series data
 
 # create plot function, plot each rev/mileage/category combo
 
