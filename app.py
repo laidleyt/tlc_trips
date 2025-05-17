@@ -180,6 +180,7 @@ app.layout = dbc.Container([
             style={
                 'textAlign': 'center',
                 'marginTop': '20px',
+                'display': 'block',
             },
             children=[
                 html.A(
@@ -194,6 +195,7 @@ app.layout = dbc.Container([
                         'textDecoration': 'none',
                         'fontSize': '16px',
                         'fontWeight': 'bold',
+                        'display': 'inline-block'
                     }
                 )
             ]
