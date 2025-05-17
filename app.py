@@ -211,7 +211,7 @@ def update_graph_and_subhead(selected_data, selected_graph):
 
     return fig, subhead
 
-server = app
+server = app.server
 
 if __name__ == "__main__":
     app.run(debug=True, port=8050)
