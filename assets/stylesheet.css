@@ -1,6 +1,11 @@
-/* Dashboard container */
+body {
+    background-color: #4a6178;
+    overflow-x: hidden;
+}
+
 .dashboard-container {
-    max-width: 100%;  /* Full width on mobile */
+    max-width: 95vw;
+    height: 900px;
     margin-left: auto;
     margin-right: auto;
     margin-top: 20px;
@@ -8,61 +13,70 @@
     background-color: #515163;
     border: 1px solid #cccccc;
     border-radius: 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-    box-sizing: border-box;  /* Prevent overflow caused by padding */
 }
 
-/* Ensure dropdown and button groups don't overflow */
-.customDropdown, .btn-group {
-    width: 100%;  /* Make dropdowns and buttons take up full container width */
+h1 {
+    font-family: "Poppins"; 
+    color: #ffffff; 
+    font-size: 35px;
+    margin: 15px;
 }
 
-/* Graph wrapper */
+p {
+    font-family: "Poppins";
+    color: #CFFF04;
+    font-size: 16px;
+    margin: 15px;
+    text-align: justify;
+}
+
+/* Radio-buttons */
+
+.form-check {
+    width: 100%;
+    height: 38px;
+    margin: 1px;
+    padding-left: 0;
+}
+
+.btn.btn-outline-light,
+.btn.btn-light {
+    width: 100%;
+    height: 100%;
+    padding: 6px;
+    font-family: "Poppins";
+    border-radius: 3px;
+}
+
+.btn.btn-outline-light {
+    border: 1px solid transparent;
+}
+
+.btn.btn-outline-light:hover {
+    color: #010103;
+    background-color: color-mix(in srgb, var(--bs-light), #010103 50%);
+}
+
+h2 {
+    margin-bottom: 0px;
+    margin-top: 10px;
+    font-family: "Poppins";
+    font-size: 14px;
+    color: #ffffff;
+}
+
+/* Dropdowns */
+
+.customDropdown {
+    font-size: 16px;
+    font-family: "Poppins";
+    padding-left: 1px;
+}
+
 #graph-wrapper {
-    width: 100%;  /* Ensure graph wrapper takes full width */
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    width: 100vw;
     padding: 1rem;
-    box-sizing: border-box;  /* Prevent padding from causing overflow */
-    margin-top: 1rem;  /* Space between other UI elements and graph */
-}
-
-/* Adjust graph itself */
-#interactive-graph {
-    width: 100%;  /* Ensure the graph is full width */
-    height: 400px;  /* Adjust height for better mobile viewing */
-}
-
-/* For smaller screens (max-width: 768px) */
-@media only screen and (max-width: 768px) {
-    .dashboard-container {
-        padding: 10px;  /* Slightly smaller padding for mobile */
-    }
-
-    /* Ensure dropdown and buttons are stacked and fit within container */
-    .customDropdown, .btn-group {
-        width: 100%;  /* Prevent overflow */
-        margin-bottom: 10px;  /* Space out buttons and dropdowns */
-    }
-
-    /* Ensure graph takes full width on small screens */
-    #interactive-graph {
-        width: 100%;
-        height: 300px;  /* Smaller graph height on mobile */
-    }
-
-    /* Adjust heading and subheading for mobile */
-    h1 {
-        font-size: 1.5em;
-        margin: 10px;
-    }
-
-    p {
-        font-size: 14px;
-    }
-
-    h2 {
-        font-size: 1em;
-    }
+    box-sizing: border-box;
 }
