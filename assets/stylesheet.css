@@ -3,43 +3,33 @@
 body {
     background-color: #4a6178;
     overflow-x: hidden;
-    font-family: 'Poppins', sans-serif;
 }
 
 .dashboard-container {
     max-width: 95vw;
-    height: 900px;
-    margin: 20px auto;
+    height: auto;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 20px;
+    margin-bottom: 20px;
     background-color: #515163;
     border: 1px solid #cccccc;
     border-radius: 10px;
-    padding: 10px;
 }
 
-/* Title */
 h1 {
-    color: #ffffff;
+    font-family: "Poppins"; 
+    color: #ffffff !important;
     font-size: 35px;
     margin: 15px;
-    font-family: 'Poppins', sans-serif;
 }
 
-/* Subtitle */
-#subhead-text {
-    color: #CFFF04;
+p {
+    font-family: "Poppins";
+    color: #CFFF04 !important;
     font-size: 16px;
     margin: 15px;
-    font-family: 'Poppins', sans-serif;
     text-align: justify;
-}
-
-/* Group Category Label */
-h2 {
-    margin-bottom: 0px;
-    margin-top: 10px;
-    font-size: 14px;
-    color: #ffffff;
-    font-family: 'Poppins', sans-serif;
 }
 
 /* Radio-buttons */
@@ -55,7 +45,7 @@ h2 {
     width: 100%;
     height: 100%;
     padding: 6px;
-    font-family: 'Poppins', sans-serif;
+    font-family: "Poppins";
     border-radius: 3px;
 }
 
@@ -68,10 +58,18 @@ h2 {
     background-color: color-mix(in srgb, var(--bs-light), #010103 50%);
 }
 
+h2 {
+    margin-bottom: 0px;
+    margin-top: 10px;
+    font-family: "Poppins";
+    font-size: 14px;
+    color: #ffffff !important;
+}
+
 /* Dropdowns */
 .customDropdown {
     font-size: 16px;
-    font-family: 'Poppins', sans-serif;
+    font-family: "Poppins";
     padding-left: 1px;
 }
 
@@ -81,4 +79,27 @@ h2 {
     width: 100vw;
     padding: 1rem;
     box-sizing: border-box;
+}
+
+/* Make sure the container text size and elements are appropriately sized for mobile */
+@media only screen and (max-width: 768px) {
+    h1 {
+        font-size: 28px !important;
+    }
+
+    p {
+        font-size: 14px !important;
+    }
+
+    h2 {
+        font-size: 12px !important;
+    }
+
+    .dashboard-container {
+        max-width: 90vw !important;
+    }
+
+    .btn-group {
+        flex-wrap: wrap;
+    }
 }
