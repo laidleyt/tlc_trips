@@ -78,7 +78,8 @@ h2 {
     -webkit-overflow-scrolling: touch;
     width: 100vw;
     padding: 1rem;
-    box-sizing: border-box;
+    box-sizing: border-box
+    margin-top: 2rem;
 }
 
 /* Make sure the container text size and elements are appropriately sized for mobile */
