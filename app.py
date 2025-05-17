@@ -184,7 +184,8 @@ app.layout = dbc.Container([
             id='github-link',
             style={
                 'textAlign': 'center',
-                'marginTop': '20px',
+                'marginTop': '10px',
+                'marginLeft': '15px'
             },
             children=[
                 html.A(
@@ -192,12 +193,12 @@ app.layout = dbc.Container([
                     href="https://github.com/laidleyt/tlc_trips",
                     target="_blank",
                     style={
-                        'padding': '10px 20px',
+                        'padding': '8px 16px',
                         'backgroundColor': '#007BFF',
                         'color': 'white',
                         'borderRadius': '5px',
                         'textDecoration': 'none',
-                        'fontSize': '16px',
+                        'fontSize': '14px',
                         'fontWeight': 'bold',
                     }
                 )
