@@ -112,20 +112,21 @@ app = Dash(__name__, external_stylesheets=[dbc.themes.FLATLY])
 app.layout = dbc.Container([
     html.Div([
 
-        # Header & Subtitle
+        # Title and Subtitle
         html.Div([
             html.H1("Daily Revenue & Mileage"),
             html.P(["Manhattan Yellow Cabs,", html.Br(), "2011-2024"],
                    id='subhead-text')
         ], style={
             "verticalAlign": "top",
-            "height": "auto",
+            "height": 155,
             "width": "100%",
             "maxWidth": "500px",
-            "margin": "10px auto"
+            "padding": "10px",
+            "boxSizing": "border-box"
         }),
 
-        # Radio Buttons
+        # Radio Button Block
         html.Div([
             html.Div(dbc.RadioItems(
                 id='data-select',
@@ -140,39 +141,39 @@ app.layout = dbc.Container([
                 value="fares"
             ), style={
                 'width': '100%',
-                'maxWidth': '160px',
-                'margin': '0 10px 10px 10px'
+                'maxWidth': '160px'
             }),
+            html.Div(style={'width': '100%', 'maxWidth': '160px'})  # Spacer
         ], style={
+            'marginLeft': 15,
+            'marginRight': 15,
             'display': 'flex',
             'flexWrap': 'wrap',
-            'justifyContent': 'center'
+            'gap': '10px'
         }),
 
-        # Dropdown Menu
+        # Dropdown Block
         html.Div([
             html.H2('Group Category:'),
-            dcc.Dropdown(
-                id='graph-type',
-                options=[
-                    {'label': 'Form of Payment: Cash/Credit', 'value': 'paytype'},
-                    {'label': 'Vendor: Creative Mobile Tech (CMT)/Curb', 'value': 'vendorid'},
-                    {'label': 'Destination: In-City/Suburb/JFK/EWR', 'value': 'ratecode'}
-                ],
-                value='paytype',
-                clearable=False,
-                optionHeight=40,
-                className='customDropdown'
-            )
+            dcc.Dropdown(id='graph-type',
+                         options=[
+                             {'label': 'Form of Payment: Cash/Credit', 'value': 'paytype'},
+                             {'label': 'Vendor: Creative Mobile Tech (CMT)/Curb', 'value': 'vendorid'},
+                             {'label': 'Destination: In-City/Suburb/JFK/EWR', 'value': 'ratecode'}
+                         ],
+                         value='paytype',
+                         clearable=False,
+                         optionHeight=40,
+                         className='customDropdown')
         ], style={
             'width': '100%',
             'maxWidth': '420px',
-            'marginLeft': '10px',
-            'marginTop': '10px',
+            'marginLeft': '15px',
+            'marginTop': '15px',
             'marginBottom': '35px'
         }),
 
-        # Graph Area
+        # Graph Container
         html.Div(
             id='graph-wrapper',
             style={
@@ -181,7 +182,7 @@ app.layout = dbc.Container([
                 'maxWidth': '100vw',
                 'padding': '1rem',
                 'boxSizing': 'border-box',
-                'marginTop': '3rem'
+                'marginTop': '7rem'
             },
             children=[
                 dcc.Graph(
@@ -198,12 +199,10 @@ app.layout = dbc.Container([
     ])
 ], fluid=True, className='dashboard-container', style={
     'display': 'flex',
-    'flexDirection': 'column',
-    'alignItems': 'center',
-    'padding': '0 1rem',
-    'boxSizing': 'border-box'
+    'flexWrap': 'wrap',
+    'justifyContent': 'center',
+    'alignItems': 'flex-start'
 })
-
         
 
 @app.callback(
