@@ -3,6 +3,7 @@
 body {
     background-color: #4a6178;
     overflow-x: hidden;
+    scroll-behavior: smooth;
 }
 
 .dashboard-container {
@@ -78,11 +79,17 @@ h2 {
     -webkit-overflow-scrolling: touch;
     width: 100vw;
     padding: 1rem;
-    box-sizing: border-box
+    box-sizing: border-box;
     margin-top: 2rem;
 }
 
-/* Make sure the container text size and elements are appropriately sized for mobile */
+/* Graph/About fade transition */
+#interactive-graph,
+#about-text {
+    transition: opacity 0.4s ease-in-out;
+}
+
+/* Responsive styles */
 @media only screen and (max-width: 768px) {
     h1 {
         font-size: 28px !important;
@@ -103,19 +110,31 @@ h2 {
     .btn-group {
         flex-wrap: wrap;
     }
+
+    #graph-wrapper {
+        padding: 0.5rem !important;
+    }
+
+    .customDropdown {
+        font-size: 14px;
+    }
 }
 
+/* About text block styling */
 #about-text {
-    color: white; /* Set the text color to white */
-    line-height: 1.0; /* Set line-height to 1.0 for single spacing */
+    color: white;
+    line-height: 1.4;
     font-size: 15px;
     text-align: left;
-    margin-top: 2rem;
+    margin: 2rem auto;
     max-width: 750px;
+    padding: 1rem;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
 }
 
 #about-text a {
-    color: #007bff; /* Set link color to blue for a nice contrast */
+    color: #007bff;
     text-decoration: none;
 }
 
