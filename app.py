@@ -213,13 +213,29 @@ app.layout = dbc.Container([
                 "About",
                 id="toggle-about-btn",
                 color="secondary",
-                outline=True
+                outline=True,
+                style={
+        "backgroundColor": "#6c757d",
+        "color": "white",
+        "border": "none",
+        "boxShadow": "none",
+        "fontWeight": "600",
+        "padding": "0.375rem 0.75rem"
+    }
             ),
             html.A(
                 "GitHub Repo",
                 href="https://github.com/laidleyt/tlc_trips",
                 target="_blank",
-                className="btn btn-outline-secondary"
+                className="btn btn-darkgray",
+                style={
+        "backgroundColor": "#6c757d",
+        "color": "white",
+        "border": "none",
+        "textDecoration": "none",
+        "padding": "0.375rem 0.75rem",
+        "fontWeight": "600"
+    }
             )
         ], style={
             "position": "fixed",
