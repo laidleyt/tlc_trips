@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Sat May 17 09:20:14 2025
-
 """
 
 import os
@@ -12,12 +11,11 @@ from datetime import datetime
 from dash import Dash, html, dcc
 import dash_bootstrap_components as dbc
 from dash import Input, Output
-
+from dash.dependencies import State
 
 df2 = pd.read_csv('data/tlc_data.csv')  # read in summarized time series data
 
 # create plot function, plot each rev/mileage/category combo
-
 def create_area_chart(df, metric, var, facet_wrap, title, y_label, vlines=[]):
     filtered_df = df[df['var'] == var]
 
@@ -176,18 +174,62 @@ app.layout = dbc.Container([
                         'height': '400px'
                     },
                     config={'responsive': True}
+                ),
+                html.Div(
+                    id='about-text',
+                    style={
+                        'display': 'none',
+                        'marginTop': '2rem',
+                        'fontSize': '15px',
+                        'maxWidth': '750px',
+                        'lineHeight': '1.6',
+                        'textAlign': 'left'
+                    },
+                    children=[
+                        html.P("Thanks for visiting. To create this dashboard, I began by downloading the full time series "
+                               "of individual yellow cab trips from 2011–2025 in parquet file format."),
+                        html.P([
+                            "You can access these files on the TLC’s official site here: ",
+                            html.A("TLC Trip Data", href="https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page", target="_blank")
+                        ]),
+                        html.P("From there, I used DuckDB in Python (also available for R) to query the parquet files, pull relevant variables, "
+                               "and summarize the daily totals in revenue and mileage."),
+                        html.P("Because the total dataset contains over a billion rows and ~30GB even in Parquet, conventional tools like pandas are "
+                               "inefficient or even unusable. DuckDB uses SQL syntax and avoids reading full datasets into memory."),
+                        html.P("I highly recommend DuckDB — it functions as a kind of 'mini data warehouse', even for small business use."),
+                        html.P("The visualizations were created with Plotly and embedded here using Plotly Dash."),
+                        html.P([
+                            "GitHub code is available here: ",
+                            html.A("GitHub Repo", href="https://github.com/laidleyt/tlc_trips", target="_blank")
+                        ]),
+                        html.P([
+                            "Feel free to connect on LinkedIn: ",
+                            html.A("Tom Laidley", href="https://linkedin.com/in/tomlaidley", target="_blank")
+                        ]),
+                        html.P("Thanks!")
+                    ]
                 )
             ]
         ),
 
         html.Div(
-            id='github-link',
             style={
-                'textAlign': 'center',
                 'marginTop': '10px',
-                'marginLeft': '15px'
+                'marginLeft': '15px',
+                'display': 'flex',
+                'gap': '10px'
             },
             children=[
+                html.Button("About", id="about-button", n_clicks=0, style={
+                    'padding': '8px 16px',
+                    'backgroundColor': '#6c757d',
+                    'color': 'white',
+                    'borderRadius': '5px',
+                    'textDecoration': 'none',
+                    'fontSize': '14px',
+                    'fontWeight': 'bold',
+                    'border': 'none'
+                }),
                 html.A(
                     "GitHub Repo",
                     href="https://github.com/laidleyt/tlc_trips",
@@ -210,8 +252,28 @@ app.layout = dbc.Container([
     style={'display': 'flex'},
     className='dashboard-container'
 )
-        
 
+# Callback to toggle graph/About and button label
+@app.callback(
+    [Output('interactive-graph', 'style'),
+     Output('about-text', 'style'),
+     Output('about-button', 'children')],
+    [Input('about-button', 'n_clicks')],
+    [State('interactive-graph', 'style'),
+     State('about-text', 'style'),
+     State('about-button', 'children')]
+)
+def toggle_about(n_clicks, graph_style, about_style, button_text):
+    if n_clicks % 2 == 1:
+        about_style_updated = about_style.copy()
+        about_style_updated['display'] = 'block'
+        return {'display': 'none'}, about_style_updated, "Back"
+    else:
+        graph_style_updated = graph_style.copy()
+        graph_style_updated['display'] = 'block'
+        return graph_style_updated, {'display': 'none'}, "About"
+
+# Callback to update graph and subhead based on selected data
 @app.callback(
     [Output('interactive-graph', 'figure'),
      Output('subhead-text', 'children')],
@@ -246,24 +308,3 @@ server = app.server
 
 if __name__ == "__main__":
     app.run(debug=True, port=8050)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
