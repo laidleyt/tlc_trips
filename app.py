@@ -94,6 +94,8 @@ fig_mileage_vendorid = create_area_chart(dfmile, 'daily_miles', 'vendorid', face
 
 app = Dash(__name__, external_stylesheets=[dbc.themes.FLATLY])
 
+server = app.server
+
 app.layout = dbc.Container([
     html.Div([
         html.Div([
