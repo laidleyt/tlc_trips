@@ -218,15 +218,29 @@ app.layout = dbc.Container([
             ]
         ),
 
-        html.Div(
-            style={
-                'marginTop': '10px',
-                'fontSize': '0.7rem',
-                'color': '#d6d6d6',
-                'textAlign': 'center'
-            },
-            children=["Data Sources: NYC Taxi & Limousine Commission, 2011–2024"]
-        )
+        html.Div([
+    dbc.Button(
+        "About",
+        id="toggle-about-btn",
+        color="secondary",
+        outline=True,
+        style={"marginRight": "10px"}
+    ),
+    html.A(
+        "GitHub Repo",
+        href="https://github.com/laidleyt/tlc_trips",
+        target="_blank",
+        className="btn btn-outline-secondary"
+    )
+], style={
+    "position": "fixed",
+    "bottom": "10px",
+    "left": "50%",
+    "transform": "translateX(-50%)",
+    "zIndex": "1000",
+    "display": "flex",
+    "justifyContent": "center"
+})
     ])
 ], fluid=True)
 
@@ -255,6 +269,20 @@ def update_graph(data_type, group_var):
         elif group_var == 'vendorid':
             return fig_mileage_vendorid, show_about
     return dash.no_update, show_about
+
+@app.callback(
+    Output('interactive-graph', 'style'),
+    Output('about-text', 'style'),
+    Output('toggle-about-btn', 'children'),
+    Input('toggle-about-btn', 'n_clicks'),
+    State('toggle-about-btn', 'children'),
+    prevent_initial_call=True
+)
+def toggle_about(n_clicks, current_text):
+    if current_text == "About":
+        return {'display': 'none'}, {'display': 'block'}, "Back"
+    else:
+        return {'display': 'block'}, {'display': 'none'}, "About"
 
 server = app.server
 
