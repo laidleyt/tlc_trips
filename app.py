@@ -164,6 +164,7 @@ app.layout = dbc.Container([
                 'marginTop': '7rem'
             },
             children=[
+                html.Div(id="trigger-graph-redraw", style={"display": "none"}),
                 dcc.Graph(
                     id='interactive-graph',
                     style={
@@ -262,16 +263,15 @@ app.layout = dbc.Container([
 ], fluid=True)
 
 
-# Callback to update figure, but skip update if About text visible
 @app.callback(
     Output('interactive-graph', 'figure'),
     Input('data-select', 'value'),
     Input('graph-type', 'value'),
-    Input('about-text', 'style')
+    Input('show-graph-store', 'data')  # NEW: triggers re-render on "Back"
 )
-def update_graph(data_type, group_var, about_style):
-    if about_style.get('display') == 'block':
-        # About visible, skip updating figure to prevent empty or flicker
+def update_graph(data_type, group_var, show_graph_flag):
+    if not show_graph_flag:
+        # About is visible, skip graph update
         return dash.no_update
 
     if data_type == "fares":
