@@ -12,6 +12,7 @@ from dash import Dash, html, dcc
 import dash_bootstrap_components as dbc
 from dash import Input, Output
 from dash.dependencies import State
+from dash import ctx 
 
 df2 = pd.read_csv('data/tlc_data.csv')  # read in summarized time series data
 
@@ -263,12 +264,17 @@ app.layout = dbc.Container([
     [Input('about-button', 'n_clicks'),
      Input('data-select', 'value'),
      Input('graph-type', 'value')],
-    [State('interactive-graph', 'style'),
-     State('about-text', 'style'),
-     State('about-button', 'children')]
+    prevent_initial_call=False
 )
-def toggle_about_and_update_figure(n_clicks, selected_data, selected_graph, graph_style, about_style, button_text):
-    # Choose figure
+def toggle_about_and_update_figure(n_clicks, selected_data, selected_graph):
+    trigger = ctx.triggered_id
+
+    # Default styles
+    graph_style = {'display': 'block', 'opacity': 1}
+    about_style = {'display': 'none'}
+    button_text = "About"
+
+    # Choose correct figure
     if selected_data == 'fares':
         if selected_graph == 'paytype':
             fig = fig_fares_paytype
@@ -289,15 +295,18 @@ def toggle_about_and_update_figure(n_clicks, selected_data, selected_graph, grap
         fig = px.scatter(title="Unknown selection")
         subhead = "Manhattan Yellow Cabs"
 
-    # Toggle About
-    if n_clicks % 2 == 1:
-        about_style_updated = about_style.copy()
-        about_style_updated['display'] = 'block'
-        return {'display': 'none'}, about_style_updated, "Back", fig, subhead
-    else:
-        graph_style_updated = graph_style.copy()
-        graph_style_updated['display'] = 'block'
-        return graph_style_updated, {'display': 'none'}, "About", fig, subhead
+    # If "about-button" was clicked, toggle visibility
+    if trigger == 'about-button' and n_clicks:
+        if n_clicks % 2 == 1:
+            graph_style = {'display': 'none'}
+            about_style = {'display': 'block', 'opacity': 1}
+            button_text = "Back"
+        else:
+            graph_style = {'display': 'block', 'opacity': 1}
+            about_style = {'display': 'none'}
+            button_text = "About"
+
+    return graph_style, about_style, button_text, fig, subhead
 
 server = app.server
 
