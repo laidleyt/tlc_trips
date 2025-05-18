@@ -92,23 +92,8 @@ fig_mileage_vendorid = create_area_chart(dfmile, 'daily_miles', 'vendorid', face
     vlines=vlines_mileage
 )
 
-app = Dash(__name__, external_stylesheets=[dbc.themes.FLATLY])
 
-app.clientside_callback(
-    """
-    function(n_intervals) {
-        if (n_intervals > 0) {
-            window.dispatchEvent(new Event('resize'));
-        }
-        return window.dash_clientside.no_update;
-    }
-    """,
-    Output('dummy-output', 'children'),
-    Input('resize-interval', 'n_intervals')
-)
-
-from dash import Dash, dcc, html, Input, Output, State
-import dash_bootstrap_components as dbc
+############################################################################################## dash component
 
 app = Dash(__name__, external_stylesheets=[dbc.themes.FLATLY])
 
@@ -329,9 +314,11 @@ def update_graph(data_type, group_var, show_graph_flag):
 )
 def toggle_about(n_clicks, current_text):
     if current_text == "About":
-        return "Back", {"display": "block", "opacity": 0}, {"display": "block", "opacity": 1}, True
+        # Show About, hide graph completely
+        return "Back", {"display": "none"}, {"display": "block"}, True
     else:
-        return "About", {"display": "block", "opacity": 1}, {"display": "none", "opacity": 0}, False
+        # Show graph, hide About and trigger resize interval
+        return "About", {"display": "block"}, {"display": "none"}, False
 
 
 @app.callback(
@@ -340,10 +327,12 @@ def toggle_about(n_clicks, current_text):
     prevent_initial_call=True
 )
 def force_graph_resize(n):
-    return {"display": "block", "opacity": 1}
+    return {"display": "block"}
 
 
 if __name__ == '__main__':
+    app.run_server(debug=True)
+
     app.run_server(debug=True)
 
 
