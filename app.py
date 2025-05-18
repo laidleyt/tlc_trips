@@ -272,7 +272,7 @@ app.layout = dbc.Container([
 
 
         # Fixed position About and GitHub buttons
-        html.Div([
+html.Div([
             dbc.Button(
                 "About",
                 id="toggle-about-btn",
