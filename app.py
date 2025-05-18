@@ -107,6 +107,24 @@ app.clientside_callback(
     Input('resize-interval', 'n_intervals')
 )
 
+from dash import Dash, dcc, html, Input, Output, State
+import dash_bootstrap_components as dbc
+
+app = Dash(__name__, external_stylesheets=[dbc.themes.FLATLY])
+
+app.clientside_callback(
+    """
+    function(n_intervals) {
+        if (n_intervals > 0) {
+            window.dispatchEvent(new Event('resize'));
+        }
+        return window.dash_clientside.no_update;
+    }
+    """,
+    Output('dummy-output', 'children'),
+    Input('resize-interval', 'n_intervals')
+)
+
 server = app.server
 
 app.layout = dbc.Container([
@@ -271,53 +289,6 @@ app.layout = dbc.Container([
 ], fluid=True)
 
 
-        # Fixed position About and GitHub buttons
-html.Div([
-            dbc.Button(
-                "About",
-                id="toggle-about-btn",
-                color="secondary",
-                outline=True,
-                style={
-        "backgroundColor": "#6c757d",
-        "color": "white",
-        "border": "none",
-        "boxShadow": "none",
-        "fontWeight": "600",
-        "padding": "0.375rem 0.75rem"
-    }
-            ),
-            html.A(
-                "GitHub Repo",
-                href="https://github.com/laidleyt/tlc_trips",
-                target="_blank",
-                className="btn btn-darkgray",
-                style={
-        "backgroundColor": "#6c757d",
-        "color": "white",
-        "border": "none",
-        "textDecoration": "none",
-        "padding": "0.375rem 0.75rem",
-        "fontWeight": "600"
-    }
-            )
-        ], style={
-            "position": "fixed",
-            "bottom": "10px",
-            "left": "50%",
-            "transform": "translateX(-50%)",
-            "zIndex": "1000",
-            "display": "flex",
-            "justifyContent": "center",
-            "width": "auto",
-            "minWidth": "200px",
-            "gap": "10px"
-        })
-
-    ])
-], fluid=True)
-
-
 @app.callback(
     Output('interactive-graph', 'figure'),
     Input('data-select', 'value'),
@@ -344,6 +315,7 @@ def update_graph(data_type, group_var, show_graph_flag):
         else:
             return fig_mileage_vendorid
 
+
 # Callback to toggle About text and graph visibility + button label
 @app.callback(
     Output("toggle-about-btn", "children"),
@@ -361,6 +333,7 @@ def toggle_about(n_clicks, current_text):
     else:
         return "About", {"display": "block", "opacity": 1}, {"display": "none", "opacity": 0}, False
 
+
 @app.callback(
     Output("interactive-graph", "style", allow_duplicate=True),
     Input("resize-interval", "n_intervals"),
@@ -369,6 +342,8 @@ def toggle_about(n_clicks, current_text):
 def force_graph_resize(n):
     return {"display": "block", "opacity": 1}
 
+
 if __name__ == '__main__':
     app.run_server(debug=True)
+
 
