@@ -185,7 +185,11 @@ app.layout = dbc.Container([
                         'maxWidth': '750px',
                         'lineHeight': '1.0',
                         'textAlign': 'left',
-                        'color': 'white'
+                        'color': '#212529',
+                        'backgroundColor': '#f8f9fa',
+                        'padding': '1.5rem',
+                        'borderRadius':'10px',
+                        'boxShadow': '0 2px 8px rgba(0, 0, 0, 0.1)'
                     },
                     children=[
                         html.P("Thanks for visiting. To create this dashboard, I began by downloading the full time series "
@@ -270,7 +274,11 @@ def toggle_about_and_update_figure(n_clicks, selected_data, selected_graph):
     trigger = ctx.triggered_id
 
     # Default styles
-    graph_style = {'display': 'block', 'opacity': 1}
+    graph_style = {
+    'display': 'block',
+    'minWidth': '600px',
+    'height': '400px'
+    }
     about_style = {'display': 'none'}
     button_text = "About"
 
