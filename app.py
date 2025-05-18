@@ -256,6 +256,7 @@ def update_graph(data_type, group_var):
             return fig_mileage_vendorid, show_about
     return dash.no_update, show_about
 
+server = app.server
 
 if __name__ == '__main__':
     app.run_server(debug=True)
