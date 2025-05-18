@@ -94,6 +94,19 @@ fig_mileage_vendorid = create_area_chart(dfmile, 'daily_miles', 'vendorid', face
 
 app = Dash(__name__, external_stylesheets=[dbc.themes.FLATLY])
 
+app.clientside_callback(
+    """
+    function(n_intervals) {
+        if (n_intervals > 0) {
+            window.dispatchEvent(new Event('resize'));
+        }
+        return window.dash_clientside.no_update;
+    }
+    """,
+    Output('dummy-output', 'children'),
+    Input('resize-interval', 'n_intervals')
+)
+
 server = app.server
 
 app.layout = dbc.Container([
@@ -105,6 +118,7 @@ app.layout = dbc.Container([
         max_intervals=1,
         disabled=True
     ),
+    html.Div(id='dummy-output', style={'display': 'none'}),
     html.Div([
         html.Div([
             html.H1(["Daily Revenue & Mileage"]),
