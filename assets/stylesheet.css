@@ -105,3 +105,20 @@ h2 {
     }
 }
 
+#about-text {
+    color: white; /* Set the text color to white */
+    line-height: 1.0; /* Set line-height to 1.0 for single spacing */
+    font-size: 15px;
+    text-align: left;
+    margin-top: 2rem;
+    max-width: 750px;
+}
+
+#about-text a {
+    color: #007bff; /* Set link color to blue for a nice contrast */
+    text-decoration: none;
+}
+
+#about-text a:hover {
+    text-decoration: underline;
+}
