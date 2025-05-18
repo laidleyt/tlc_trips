@@ -111,19 +111,14 @@ server = app.server
 
 app.layout = dbc.Container([
     dcc.Store(id="show-graph-store", data=True),
-    dcc.Interval(
-        id="resize-interval",
-        interval=100,  # milliseconds
-        n_intervals=0,
-        max_intervals=1,
-        disabled=True
-    ),
+    dcc.Interval(id="resize-interval", interval=100, n_intervals=0, max_intervals=1, disabled=True),
     html.Div(id='dummy-output', style={'display': 'none'}),
-    html.Div([
+
+    # Main content block (graph and controls)
+    html.Div([  
         html.Div([
             html.H1(["Daily Revenue & Mileage"]),
-            html.P(["Manhattan Yellow Cabs,", html.Br(), "2011-2024"],
-                   id='subhead-text')
+            html.P(["Manhattan Yellow Cabs,", html.Br(), "2011-2024"], id='subhead-text')
         ], style={
             "verticalAlign": "top",
             "height": 155,
@@ -184,7 +179,7 @@ app.layout = dbc.Container([
                     style={
                         'minWidth': '600px',
                         'height': '400px',
-                        'display': 'block'  # initially visible
+                        'display': 'block'
                     },
                     config={'responsive': True}
                 ),
@@ -200,10 +195,10 @@ app.layout = dbc.Container([
                         'color': 'white',
                         'backgroundColor': '#6c757d',
                         'padding': '1.5rem',
-                        'borderRadius':'10px',
+                        'borderRadius': '10px',
                         'boxShadow': '0 2px 8px rgba(0, 0, 0, 0.1)'
                     },
-                    children=[
+                    children=[  
                         html.P("Thanks for visiting. To create this dashboard, I began by downloading the full time series "
                                "of individual yellow cab trips from 2011–2025 in parquet file format.", style={'marginBottom':'0.5rem'}),
                         html.P([
@@ -225,10 +220,56 @@ app.layout = dbc.Container([
                             html.A("Tom Laidley", href="https://linkedin.com/in/tomlaidley", target="_blank")
                         ], style={'marginBottom':'0.5rem'}),
                         html.P("Thanks!", style={'marginBottom':'0'})
-                    ]
+                     ]  
                 )
             ]
+        )
+    ]),  # END main content container
+
+    # Fixed position footer with About and GitHub buttons
+    html.Div([
+        dbc.Button(
+            "About",
+            id="toggle-about-btn",
+            color="secondary",
+            outline=True,
+            style={
+                "backgroundColor": "#6c757d",
+                "color": "white",
+                "border": "none",
+                "boxShadow": "none",
+                "fontWeight": "600",
+                "padding": "0.375rem 0.75rem"
+            }
         ),
+        html.A(
+            "GitHub Repo",
+            href="https://github.com/laidleyt/tlc_trips",
+            target="_blank",
+            className="btn btn-darkgray",
+            style={
+                "backgroundColor": "#6c757d",
+                "color": "white",
+                "border": "none",
+                "textDecoration": "none",
+                "padding": "0.375rem 0.75rem",
+                "fontWeight": "600"
+            }
+        )
+    ], style={
+        "position": "fixed",
+        "bottom": "10px",
+        "left": "50%",
+        "transform": "translateX(-50%)",
+        "zIndex": "1000",
+        "display": "flex",
+        "justifyContent": "center",
+        "width": "auto",
+        "minWidth": "200px",
+        "gap": "10px"
+    })
+], fluid=True)
+
 
         # Fixed position About and GitHub buttons
         html.Div([
