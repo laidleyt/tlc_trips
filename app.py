@@ -297,7 +297,8 @@ def update_graph(data_type, group_var, show_graph_flag):
     Output("resize-interval", "disabled"),
     Input("toggle-about-btn", "n_clicks"),
     State("toggle-about-btn", "children"),
-    prevent_initial_call=True
+    prevent_initial_call=True,
+    allow_duplicate=True
 )
 def toggle_about(n_clicks, current_text):
     if current_text == "About":
