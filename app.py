@@ -97,6 +97,14 @@ app = Dash(__name__, external_stylesheets=[dbc.themes.FLATLY])
 server = app.server
 
 app.layout = dbc.Container([
+    dcc.Store(id="show-graph-store", data=True),
+    dcc.Interval(
+        id="resize-interval",
+        interval=100,  # milliseconds
+        n_intervals=0,
+        max_intervals=1,
+        disabled=True
+    ),
     html.Div([
         html.Div([
             html.H1(["Daily Revenue & Mileage"]),
@@ -283,18 +291,29 @@ def update_graph(data_type, group_var, about_style):
 
 # Callback to toggle About text and graph visibility + button label
 @app.callback(
-    Output('interactive-graph', 'style'),
-    Output('about-text', 'style'),
-    Output('toggle-about-btn', 'children'),
-    Input('toggle-about-btn', 'n_clicks'),
-    State('toggle-about-btn', 'children'),
+    Output("toggle-about-btn", "children"),
+    Output("interactive-graph", "style"),
+    Output("about-text", "style"),
+    Output("resize-interval", "disabled"),
+    Input("toggle-about-btn", "n_clicks"),
+    State("toggle-about-btn", "children"),
     prevent_initial_call=True
 )
 def toggle_about(n_clicks, current_text):
-    if current_text.strip().lower() == "about":
-        return {'visibility': 'hidden', 'height': '0', 'overflow': 'hidden'}, {'display': 'block'}, "Back"
+    if current_text == "About":
+        return "Back", {"display": "block", "opacity": 0}, {"display": "block", "opacity": 1}, True
     else:
-        return {'visibility': 'visible', 'height': 'auto', 'overflow': 'visible'}, {'display': 'none'}, "About"
+        return "About", {"display": "block", "opacity": 1}, {"display": "none", "opacity": 0}, False
+
+from dash_extensions.enrich import Trigger
+
+@app.callback(
+    Output("interactive-graph", "style", allow_duplicate=True),
+    Input("resize-interval", "n_intervals"),
+    prevent_initial_call=True
+)
+def force_graph_resize(n):
+    return {"display": "block", "opacity": 1}
 
 if __name__ == '__main__':
     app.run_server(debug=True)
