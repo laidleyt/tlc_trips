@@ -224,7 +224,8 @@ app.layout = dbc.Container([
         ], style={
             "position": "fixed",
             "bottom": "10px",
-            "left": "15px",
+            "left": "50%",
+            "transform": "translateX(-50%)",
             "zIndex": "1000",
             "display": "flex",
             "justifyContent": "center",
