@@ -305,8 +305,6 @@ def toggle_about(n_clicks, current_text):
     else:
         return "About", {"display": "block", "opacity": 1}, {"display": "none", "opacity": 0}, False
 
-from dash_extensions.enrich import Trigger
-
 @app.callback(
     Output("interactive-graph", "style", allow_duplicate=True),
     Input("resize-interval", "n_intervals"),
