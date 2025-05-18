@@ -115,7 +115,7 @@ app.layout = dbc.Container([
             html.P(["Manhattan Yellow Cabs,", html.Br(), "2011-2024"],
                    id='subhead-text')
         ], style={
-            "vertical-alignment": "top",
+            "verticalAlign": "top",
             "height": 155,
             "width": 500
         }),
@@ -183,36 +183,36 @@ app.layout = dbc.Container([
                         'marginTop': '2rem',
                         'fontSize': '15px',
                         'maxWidth': '750px',
-                        'lineHeight': '1.0',
+                        'lineHeight': '1.2',
                         'textAlign': 'left',
-                        'color': '#212529',
-                        'backgroundColor': '#f8f9fa',
+                        'color': 'white',  # text color changed to white
+                        'backgroundColor': '#6c757d',  # gray background kept
                         'padding': '1.5rem',
                         'borderRadius':'10px',
                         'boxShadow': '0 2px 8px rgba(0, 0, 0, 0.1)'
                     },
                     children=[
                         html.P("Thanks for visiting. To create this dashboard, I began by downloading the full time series "
-                               "of individual yellow cab trips from 2011–2025 in parquet file format."),
+                               "of individual yellow cab trips from 2011–2025 in parquet file format.", style={'marginBottom':'0.5rem'}),
                         html.P([
                             "You can access these files on the TLC’s official site here: ",
                             html.A("TLC Trip Data", href="https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page", target="_blank")
-                        ]),
+                        ], style={'marginBottom':'0.5rem'}),
                         html.P("From there, I used DuckDB in Python (also available for R) to query the parquet files, pull relevant variables, "
-                               "and summarize the daily totals in revenue and mileage."),
+                               "and summarize the daily totals in revenue and mileage.", style={'marginBottom':'0.5rem'}),
                         html.P("Because the total dataset contains over a billion rows and ~30GB even in Parquet, conventional tools like pandas are "
-                               "inefficient or even unusable. DuckDB uses SQL syntax and avoids reading full datasets into memory."),
-                        html.P("I highly recommend DuckDB — it functions as a kind of 'mini data warehouse', even for small business use."),
-                        html.P("The visualizations were created with Plotly and embedded here using Plotly Dash."),
+                               "inefficient or even unusable. DuckDB uses SQL syntax and avoids reading full datasets into memory.", style={'marginBottom':'0.5rem'}),
+                        html.P("I highly recommend DuckDB — it functions as a kind of 'mini data warehouse', even for small business use.", style={'marginBottom':'0.5rem'}),
+                        html.P("The visualizations were created with Plotly and embedded here using Plotly Dash.", style={'marginBottom':'0.5rem'}),
                         html.P([
                             "GitHub code is available here: ",
                             html.A("GitHub Repo", href="https://github.com/laidleyt/tlc_trips", target="_blank")
-                        ]),
+                        ], style={'marginBottom':'0.5rem'}),
                         html.P([
                             "Feel free to connect on LinkedIn: ",
                             html.A("Tom Laidley", href="https://linkedin.com/in/tomlaidley", target="_blank")
-                        ]),
-                        html.P("Thanks!")
+                        ], style={'marginBottom':'0.5rem'}),
+                        html.P("Thanks!", style={'marginBottom':'0'})
                     ]
                 )
             ]
@@ -221,102 +221,41 @@ app.layout = dbc.Container([
         html.Div(
             style={
                 'marginTop': '10px',
-                'marginLeft': '15px',
-                'display': 'flex',
-                'gap': '10px'
+                'fontSize': '0.7rem',
+                'color': '#d6d6d6',
+                'textAlign': 'center'
             },
-            children=[
-                html.Button("About", id="about-button", n_clicks=0, style={
-                    'padding': '8px 16px',
-                    'backgroundColor': '#6c757d',
-                    'color': 'white',
-                    'borderRadius': '5px',
-                    'textDecoration': 'none',
-                    'fontSize': '14px',
-                    'fontWeight': 'bold',
-                    'border': 'none'
-                }),
-                html.A(
-                    "GitHub Repo",
-                    href="https://github.com/laidleyt/tlc_trips",
-                    target="_blank",
-                    style={
-                        'padding': '8px 16px',
-                        'backgroundColor': '#007BFF',
-                        'color': 'white',
-                        'borderRadius': '5px',
-                        'textDecoration': 'none',
-                        'fontSize': '14px',
-                        'fontWeight': 'bold',
-                    }
-                )
-            ]
+            children=["Data Sources: NYC Taxi & Limousine Commission, 2011–2024"]
         )
     ])
-],  
-    fluid=True,
-    style={'display': 'flex'},
-    className='dashboard-container'
-)
+], fluid=True)
 
+
+# callback function for updating graph and about text visibility
 @app.callback(
-    [Output('interactive-graph', 'style'),
-     Output('about-text', 'style'),
-     Output('about-button', 'children'),
-     Output('interactive-graph', 'figure'),
-     Output('subhead-text', 'children')],
-    [Input('about-button', 'n_clicks'),
-     Input('data-select', 'value'),
-     Input('graph-type', 'value')],
-    prevent_initial_call=False
+    Output('interactive-graph', 'figure'),
+    Output('about-text', 'style'),
+    Input('data-select', 'value'),
+    Input('graph-type', 'value')
 )
-def toggle_about_and_update_figure(n_clicks, selected_data, selected_graph):
-    trigger = ctx.triggered_id
-
-    # Default styles
-    graph_style = {
-    'display': 'block',
-    'minWidth': '600px',
-    'height': '400px'
-    }
-    about_style = {'display': 'none'}
-    button_text = "About"
-
-    # Choose correct figure
-    if selected_data == 'fares':
-        if selected_graph == 'paytype':
-            fig = fig_fares_paytype
-        elif selected_graph == 'vendorid':
-            fig = fig_fares_vendorid
-        elif selected_graph == 'ratecode':
-            fig = fig_fares_ratecode
-        subhead = ["Manhattan Yellow Cabs,", html.Br(), "2011–2024"]
-    elif selected_data == 'mileage':
-        if selected_graph == 'paytype':
-            fig = fig_mileage_paytype
-        elif selected_graph == 'vendorid':
-            fig = fig_mileage_vendorid
-        elif selected_graph == 'ratecode':
-            fig = fig_mileage_ratecode
-        subhead = ["Manhattan Yellow Cabs,", html.Br(), "2017–2024"]
+def update_graph(data_type, group_var):
+    show_about = {'display': 'none'}
+    if data_type == 'fares':
+        if group_var == 'paytype':
+            return fig_fares_paytype, show_about
+        elif group_var == 'ratecode':
+            return fig_fares_ratecode, show_about
+        elif group_var == 'vendorid':
+            return fig_fares_vendorid, show_about
     else:
-        fig = px.scatter(title="Unknown selection")
-        subhead = "Manhattan Yellow Cabs"
+        if group_var == 'paytype':
+            return fig_mileage_paytype, show_about
+        elif group_var == 'ratecode':
+            return fig_mileage_ratecode, show_about
+        elif group_var == 'vendorid':
+            return fig_mileage_vendorid, show_about
+    return dash.no_update, show_about
 
-    # If "about-button" was clicked, toggle visibility
-    if trigger == 'about-button' and n_clicks:
-        if n_clicks % 2 == 1:
-            graph_style = {'display': 'none'}
-            about_style = {'display': 'block', 'opacity': 1}
-            button_text = "Back"
-        else:
-            graph_style = {'display': 'block', 'opacity': 1}
-            about_style = {'display': 'none'}
-            button_text = "About"
 
-    return graph_style, about_style, button_text, fig, subhead
-
-server = app.server
-
-if __name__ == "__main__":
-    app.run(debug=True, port=8050)
+if __name__ == '__main__':
+    app.run_server(debug=True)
