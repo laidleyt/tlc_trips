@@ -182,8 +182,9 @@ app.layout = dbc.Container([
                         'marginTop': '2rem',
                         'fontSize': '15px',
                         'maxWidth': '750px',
-                        'lineHeight': '1.6',
-                        'textAlign': 'left'
+                        'lineHeight': '1.0',
+                        'textAlign': 'left',
+                        'color': 'white'
                     },
                     children=[
                         html.P("Thanks for visiting. To create this dashboard, I began by downloading the full time series "
