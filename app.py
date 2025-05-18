@@ -254,34 +254,20 @@ app.layout = dbc.Container([
     className='dashboard-container'
 )
 
-# Callback to toggle graph/About and button label
 @app.callback(
     [Output('interactive-graph', 'style'),
      Output('about-text', 'style'),
-     Output('about-button', 'children')],
-    [Input('about-button', 'n_clicks')],
+     Output('about-button', 'children'),
+     Output('interactive-graph', 'figure'),
+     Output('subhead-text', 'children')],
+    [Input('about-button', 'n_clicks'),
+     Input('data-select', 'value'),
+     Input('graph-type', 'value')],
     [State('interactive-graph', 'style'),
      State('about-text', 'style'),
      State('about-button', 'children')]
 )
-def toggle_about(n_clicks, graph_style, about_style, button_text):
-    if n_clicks % 2 == 1:
-        about_style_updated = about_style.copy()
-        about_style_updated['display'] = 'block'
-        return {'display': 'none'}, about_style_updated, "Back"
-    else:
-        graph_style_updated = graph_style.copy()
-        graph_style_updated['display'] = 'block'
-        return graph_style_updated, {'display': 'none'}, "About"
-
-# Callback to update graph and subhead based on selected data
-@app.callback(
-    [Output('interactive-graph', 'figure'),
-     Output('subhead-text', 'children')],
-    [Input('data-select', 'value'),
-     Input('graph-type', 'value')]
-)
-def update_graph_and_subhead(selected_data, selected_graph):
+def toggle_about_and_update_figure(n_clicks, selected_data, selected_graph, graph_style, about_style, button_text):
     # Choose figure
     if selected_data == 'fares':
         if selected_graph == 'paytype':
@@ -303,7 +289,15 @@ def update_graph_and_subhead(selected_data, selected_graph):
         fig = px.scatter(title="Unknown selection")
         subhead = "Manhattan Yellow Cabs"
 
-    return fig, subhead
+    # Toggle About
+    if n_clicks % 2 == 1:
+        about_style_updated = about_style.copy()
+        about_style_updated['display'] = 'block'
+        return {'display': 'none'}, about_style_updated, "Back", fig, subhead
+    else:
+        graph_style_updated = graph_style.copy()
+        graph_style_updated['display'] = 'block'
+        return graph_style_updated, {'display': 'none'}, "About", fig, subhead
 
 server = app.server
 
