@@ -213,8 +213,7 @@ app.layout = dbc.Container([
                 "About",
                 id="toggle-about-btn",
                 color="secondary",
-                outline=True,
-                style={"marginRight": "10px"}
+                outline=True
             ),
             html.A(
                 "GitHub Repo",
@@ -225,8 +224,13 @@ app.layout = dbc.Container([
         ], style={
             "position": "fixed",
             "bottom": "10px",
-            "right": "10px",
-            "zIndex": 1000
+            "left": "15px",
+            "zIndex": "1000",
+            "display": "flex",
+            "justifyContent": "center",
+            "width": "auto",
+            "minWidth": "200px",
+            "gap": "10px"
         })
 
     ])
@@ -270,10 +274,10 @@ def update_graph(data_type, group_var, about_style):
     prevent_initial_call=True
 )
 def toggle_about(n_clicks, current_text):
-    if current_text == "About":
-        return {'display': 'none'}, {'display': 'block'}, "Back"
+    if current_text.strip().lower() == "about":
+        return {'visibility': 'hidden', 'height': '0', 'overflow': 'hidden'}, {'display': 'block'}, "Back"
     else:
-        return {'display': 'block'}, {'display': 'none'}, "About"
+        return {'visibility': 'visible', 'height': 'auto', 'overflow': 'visible'}, {'display': 'none'}, "About"
 
 if __name__ == '__main__':
     app.run_server(debug=True)
