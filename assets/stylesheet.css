@@ -129,7 +129,7 @@ h2 {
     margin: 2rem auto;
     max-width: 750px;
     padding: 1rem;
-    background-color: rgba(255, 255, 255, 0.05);
+    background-color: #6c757d;
     border-radius: 10px;
 }
 
@@ -140,4 +140,8 @@ h2 {
 
 #about-text a:hover {
     text-decoration: underline;
+}
+
+#about-text p {
+    color: white !important;
 }
