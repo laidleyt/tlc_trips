@@ -191,11 +191,11 @@ app.layout = dbc.Container([
                 'boxSizing': 'border-box',
                 'marginTop': '7rem',
                 'display': 'none',  # hidden initially
-                'color': '#333',
+                'color': '#333333',
                 'backgroundColor': '#f9f9f9',
                 'borderRadius': '8px',
-                'fontSize': '14px',
-                'lineHeight': '1.6',
+                'fontSize': '12px',
+                'lineHeight': '1.0',
                 'maxWidth': '700px'
             },
             children=[
