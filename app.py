@@ -390,24 +390,6 @@ def disable_interval_after_fire(n_intervals):
         return True
     return dash.no_update
 
-app.clientside_callback(
-    """
-    function(n_clicks) {
-        setTimeout(function() {
-            var graph = document.getElementById('interactive-graph');
-            if (graph) {
-                window.dispatchEvent(new Event('resize'));
-                Plotly.Plots.resize(graph);
-            }
-        }, 300);
-        return "";
-    }
-    """,
-    Output('dummy-output-click', 'children'),
-    Input('toggle-about-btn', 'n_clicks'),
-    prevent_initial_call=True
-)
-
 if __name__ == '__main__':
     app.run_server(debug=True)
 
