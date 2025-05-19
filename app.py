@@ -1,21 +1,12 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Sat May 17 09:20:14 2025
-"""
-
 import os
 import pandas as pd
-import plotly.io as pio
 import plotly.express as px
 from datetime import datetime
-from dash import Dash, html, dcc
+from dash import Dash, html, dcc, Input, Output, State, ctx
 import dash_bootstrap_components as dbc
-from dash import Input, Output
-from dash.dependencies import State
 
 df2 = pd.read_csv('data/tlc_data.csv')  # read in summarized time series data
 
-# create plot function, plot each rev/mileage/category combo
 def create_area_chart(df, metric, var, facet_wrap, title, y_label, vlines=[]):
     filtered_df = df[df['var'] == var]
 
@@ -49,7 +40,7 @@ def create_area_chart(df, metric, var, facet_wrap, title, y_label, vlines=[]):
 
     return fig
 
-# Set up vlines
+# Set up vertical lines
 vlines_fares = [
     {"date": "2011-05-04", "color": "black", "dash": "dash", "label": "Uber Intro'd<br>NYC"},
     {"date": "2020-03-13", "color": "#39FF14", "label": "COVID-19 Declared <br> Natl Emergency"}
@@ -64,7 +55,7 @@ startmile = '2017-01-01'
 endmile = '2024-12-31'
 dfmile = df2[(df2['dyear'] >= startmile) & (df2['dyear'] <= endmile)]
 
-# Fares
+# Pre-create figures for speed
 fig_fares_paytype = create_area_chart(df2, 'daily_fare', 'paytype', facet_wrap=1,
     title="Daily Yellow Cab Fares, 2011-2024 <br> In 2025 US Dollars",
     y_label="Millions of USD",
@@ -83,7 +74,6 @@ fig_fares_vendorid = create_area_chart(df2, 'daily_fare', 'vendorid', facet_wrap
     vlines=vlines_fares
 )
 
-# Mileage
 fig_mileage_paytype = create_area_chart(dfmile, 'daily_miles', 'paytype', facet_wrap=1,
     title="Daily Yellow Cab Mileage, 2017-2024",
     y_label="Miles Traveled",
@@ -102,19 +92,35 @@ fig_mileage_vendorid = create_area_chart(dfmile, 'daily_miles', 'vendorid', face
     vlines=vlines_mileage
 )
 
-
-################################################################################################# create dashboard & integrate figures
-
 app = Dash(__name__, external_stylesheets=[dbc.themes.FLATLY])
 
+app.clientside_callback(
+    """
+    function(n_intervals) {
+        if (n_intervals > 0) {
+            window.dispatchEvent(new Event('resize'));
+        }
+        return window.dash_clientside.no_update;
+    }
+    """,
+    Output('dummy-output', 'children'),
+    Input('resize-interval', 'n_intervals')
+)
+
+server = app.server
+
 app.layout = dbc.Container([
-    html.Div([
+    dcc.Store(id="show-graph-store", data=True),
+    dcc.Interval(id="resize-interval", interval=100, n_intervals=0, max_intervals=1, disabled=True),
+    html.Div(id='dummy-output', style={'display': 'none'}),
+
+    # Main content block (graph and controls)
+    html.Div([  
         html.Div([
             html.H1(["Daily Revenue & Mileage"]),
-            html.P(["Manhattan Yellow Cabs,", html.Br(), "2011-2024"],
-                   id='subhead-text')
+            html.P(["Manhattan Yellow Cabs,", html.Br(), "2011-2024"], id='subhead-text')
         ], style={
-            "vertical-alignment": "top",
+            "verticalAlign": "top",
             "height": 155,
             "width": 500
         }),
@@ -167,11 +173,13 @@ app.layout = dbc.Container([
                 'marginTop': '7rem'
             },
             children=[
+                html.Div(id="trigger-graph-redraw", style={"display": "none"}),
                 dcc.Graph(
                     id='interactive-graph',
                     style={
                         'minWidth': '600px',
-                        'height': '400px'
+                        'height': '400px',
+                        'display': 'block'
                     },
                     config={'responsive': True}
                 ),
@@ -182,129 +190,184 @@ app.layout = dbc.Container([
                         'marginTop': '2rem',
                         'fontSize': '15px',
                         'maxWidth': '750px',
-                        'lineHeight': '1.6',
-                        'textAlign': 'left'
+                        'lineHeight': '1.2',
+                        'textAlign': 'left',
+                        'color': 'white',
+                        'backgroundColor': '#6c757d',
+                        'padding': '1.5rem',
+                        'borderRadius': '10px',
+                        'boxShadow': '0 2px 8px rgba(0, 0, 0, 0.1)'
                     },
-                    children=[
+                    children=[  
                         html.P("Thanks for visiting. To create this dashboard, I began by downloading the full time series "
-                               "of individual yellow cab trips from 2011–2025 in parquet file format."),
+                               "of individual yellow cab trips from 2011–2025 in parquet file format.", style={'marginBottom':'0.5rem'}),
                         html.P([
                             "You can access these files on the TLC’s official site here: ",
                             html.A("TLC Trip Data", href="https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page", target="_blank")
-                        ]),
+                        ], style={'marginBottom':'0.5rem'}),
                         html.P("From there, I used DuckDB in Python (also available for R) to query the parquet files, pull relevant variables, "
-                               "and summarize the daily totals in revenue and mileage."),
+                               "and summarize the daily totals in revenue and mileage.", style={'marginBottom':'0.5rem'}),
                         html.P("Because the total dataset contains over a billion rows and ~30GB even in Parquet, conventional tools like pandas are "
-                               "inefficient or even unusable. DuckDB uses SQL syntax and avoids reading full datasets into memory."),
-                        html.P("I highly recommend DuckDB — it functions as a kind of 'mini data warehouse', even for small business use."),
-                        html.P("The visualizations were created with Plotly and embedded here using Plotly Dash."),
+                               "inefficient or even unusable. DuckDB uses SQL syntax and avoids reading full datasets into memory.", style={'marginBottom':'0.5rem'}),
+                        html.P("I highly recommend DuckDB — it functions as a kind of 'mini data warehouse', even for small business use.", style={'marginBottom':'0.5rem'}),
+                        html.P("The visualizations were created with Plotly and embedded here using Plotly Dash.", style={'marginBottom':'0.5rem'}),
                         html.P([
                             "GitHub code is available here: ",
                             html.A("GitHub Repo", href="https://github.com/laidleyt/tlc_trips", target="_blank")
-                        ]),
+                        ], style={'marginBottom':'0.5rem'}),
                         html.P([
                             "Feel free to connect on LinkedIn: ",
                             html.A("Tom Laidley", href="https://linkedin.com/in/tomlaidley", target="_blank")
-                        ]),
-                        html.P("Thanks!")
-                    ]
-                )
-            ]
-        ),
-
-        html.Div(
-            style={
-                'marginTop': '10px',
-                'marginLeft': '15px',
-                'display': 'flex',
-                'gap': '10px'
-            },
-            children=[
-                html.Button("About", id="about-button", n_clicks=0, style={
-                    'padding': '8px 16px',
-                    'backgroundColor': '#6c757d',
-                    'color': 'white',
-                    'borderRadius': '5px',
-                    'textDecoration': 'none',
-                    'fontSize': '14px',
-                    'fontWeight': 'bold',
-                    'border': 'none'
-                }),
-                html.A(
-                    "GitHub Repo",
-                    href="https://github.com/laidleyt/tlc_trips",
-                    target="_blank",
-                    style={
-                        'padding': '8px 16px',
-                        'backgroundColor': '#007BFF',
-                        'color': 'white',
-                        'borderRadius': '5px',
-                        'textDecoration': 'none',
-                        'fontSize': '14px',
-                        'fontWeight': 'bold',
-                    }
+                        ], style={'marginBottom':'0.5rem'}),
+                        html.P("Thanks!", style={'marginBottom':'0'})
+                     ]  
                 )
             ]
         )
+    ]),  # END main content container
+
+    # Fixed position footer with About and GitHub buttons
+    html.Div([
+        dbc.Button(
+            "About",
+            id="toggle-about-btn",
+            color="secondary",
+            outline=True,
+            style={
+                "backgroundColor": "#6c757d",
+                "color": "white",
+                "border": "none",
+                "boxShadow": "none",
+                "fontWeight": "600",
+                "padding": "0.375rem 0.75rem"
+            }
+        ),
+        html.A(
+            "GitHub Repo",
+            href="https://github.com/laidleyt/tlc_trips",
+            target="_blank",
+            className="btn btn-darkgray",
+            style={
+                "backgroundColor": "#6c757d",
+                "color": "white",
+                "border": "none",
+                "textDecoration": "none",
+                "padding": "0.375rem 0.75rem",
+                "fontWeight": "600"
+            }
+        )
+    ], style={
+        "position": "fixed",
+        "bottom": "10px",
+        "left": "50%",
+        "transform": "translateX(-50%)",
+        "zIndex": "1000",
+        "display": "flex",
+        "justifyContent": "center",
+        "width": "auto",
+        "minWidth": "200px",
+        "gap": "10px"
+    })
+], fluid=True)
+
+
+        # Fixed position About and GitHub buttons
+        html.Div([
+            dbc.Button(
+                "About",
+                id="toggle-about-btn",
+                color="secondary",
+                outline=True,
+                style={
+        "backgroundColor": "#6c757d",
+        "color": "white",
+        "border": "none",
+        "boxShadow": "none",
+        "fontWeight": "600",
+        "padding": "0.375rem 0.75rem"
+    }
+            ),
+            html.A(
+                "GitHub Repo",
+                href="https://github.com/laidleyt/tlc_trips",
+                target="_blank",
+                className="btn btn-darkgray",
+                style={
+        "backgroundColor": "#6c757d",
+        "color": "white",
+        "border": "none",
+        "textDecoration": "none",
+        "padding": "0.375rem 0.75rem",
+        "fontWeight": "600"
+    }
+            )
+        ], style={
+            "position": "fixed",
+            "bottom": "10px",
+            "left": "50%",
+            "transform": "translateX(-50%)",
+            "zIndex": "1000",
+            "display": "flex",
+            "justifyContent": "center",
+            "width": "auto",
+            "minWidth": "200px",
+            "gap": "10px"
+        })
+
     ])
-],  
-    fluid=True,
-    style={'display': 'flex'},
-    className='dashboard-container'
-)
+], fluid=True)
 
-# Callback to toggle graph/About and button label
+
 @app.callback(
-    [Output('interactive-graph', 'style'),
-     Output('about-text', 'style'),
-     Output('about-button', 'children')],
-    [Input('about-button', 'n_clicks')],
-    [State('interactive-graph', 'style'),
-     State('about-text', 'style'),
-     State('about-button', 'children')]
+    Output('interactive-graph', 'figure'),
+    Input('data-select', 'value'),
+    Input('graph-type', 'value'),
+    Input('show-graph-store', 'data')  # NEW: triggers re-render on "Back"
 )
-def toggle_about(n_clicks, graph_style, about_style, button_text):
-    if n_clicks % 2 == 1:
-        about_style_updated = about_style.copy()
-        about_style_updated['display'] = 'block'
-        return {'display': 'none'}, about_style_updated, "Back"
-    else:
-        graph_style_updated = graph_style.copy()
-        graph_style_updated['display'] = 'block'
-        return graph_style_updated, {'display': 'none'}, "About"
+def update_graph(data_type, group_var, show_graph_flag):
+    if not show_graph_flag:
+        # About is visible, skip graph update
+        return dash.no_update
 
-# Callback to update graph and subhead based on selected data
+    if data_type == "fares":
+        if group_var == "paytype":
+            return fig_fares_paytype
+        elif group_var == "ratecode":
+            return fig_fares_ratecode
+        else:
+            return fig_fares_vendorid
+    else:
+        if group_var == "paytype":
+            return fig_mileage_paytype
+        elif group_var == "ratecode":
+            return fig_mileage_ratecode
+        else:
+            return fig_mileage_vendorid
+
+# Callback to toggle About text and graph visibility + button label
 @app.callback(
-    [Output('interactive-graph', 'figure'),
-     Output('subhead-text', 'children')],
-    [Input('data-select', 'value'),
-     Input('graph-type', 'value')]
+    Output("toggle-about-btn", "children"),
+    Output("interactive-graph", "style"),
+    Output("about-text", "style"),
+    Output("resize-interval", "disabled"),
+    Input("toggle-about-btn", "n_clicks"),
+    State("toggle-about-btn", "children"),
+    prevent_initial_call=True,
+    allow_duplicate=True
 )
-def update_graph_and_subhead(selected_data, selected_graph):
-    # Choose figure
-    if selected_data == 'fares':
-        if selected_graph == 'paytype':
-            fig = fig_fares_paytype
-        elif selected_graph == 'vendorid':
-            fig = fig_fares_vendorid
-        elif selected_graph == 'ratecode':
-            fig = fig_fares_ratecode
-        subhead = ["Manhattan Yellow Cabs,", html.Br(), "2011–2024"]
-    elif selected_data == 'mileage':
-        if selected_graph == 'paytype':
-            fig = fig_mileage_paytype
-        elif selected_graph == 'vendorid':
-            fig = fig_mileage_vendorid
-        elif selected_graph == 'ratecode':
-            fig = fig_mileage_ratecode
-        subhead = ["Manhattan Yellow Cabs,", html.Br(), "2017–2024"]
+def toggle_about(n_clicks, current_text):
+    if current_text == "About":
+        return "Back", {"display": "block", "opacity": 0}, {"display": "block", "opacity": 1}, True
     else:
-        fig = px.scatter(title="Unknown selection")
-        subhead = "Manhattan Yellow Cabs"
+        return "About", {"display": "block", "opacity": 1}, {"display": "none", "opacity": 0}, False
 
-    return fig, subhead
+@app.callback(
+    Output("interactive-graph", "style", allow_duplicate=True),
+    Input("resize-interval", "n_intervals"),
+    prevent_initial_call=True
+)
+def force_graph_resize(n):
+    return {"display": "block", "opacity": 1}
 
-server = app.server
-
-if __name__ == "__main__":
-    app.run(debug=True, port=8050)
+if __name__ == '__main__':
+    app.run_server(debug=True)
