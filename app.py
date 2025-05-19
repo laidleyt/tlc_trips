@@ -183,7 +183,7 @@ app.layout = dbc.Container([
                         'overflowX': 'hidden',  # no horizontal scroll
                         'overflowY': 'auto',    # allow vertical scroll when needed
                         'width': '80vw',
-                        'maxHeight': '700px',   # control max visible height
+                        'maxHeight': '100vh',   # control max visible height
                         'padding': '1rem',
                         'boxSizing': 'border-box',
                         'marginTop': '7rem',
