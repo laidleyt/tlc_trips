@@ -279,27 +279,32 @@ app.layout = dbc.Container([
     Output('interactive-graph', 'figure'),
     Input('data-select', 'value'),
     Input('graph-type', 'value'),
-    Input('show-graph-store', 'data')  # NEW: triggers re-render on "Back"
+    Input('show-graph-store', 'data')  # Triggers re-render when toggling "Back"
 )
 def update_graph(data_type, group_var, show_graph_flag):
     if not show_graph_flag:
-        # About is visible, skip graph update
         return dash.no_update
 
     if data_type == "fares":
-        if group_var == "paytype":
-            return fig_fares_paytype
-        elif group_var == "ratecode":
-            return fig_fares_ratecode
-        else:
-            return fig_fares_vendorid
+        return create_area_chart(
+            df2,
+            'daily_fare',
+            group_var,
+            facet_wrap=2 if group_var == 'ratecode' else 1,
+            title="Daily Yellow Cab Fares, 2011–2024<br>In 2025 US Dollars",
+            y_label="Millions of USD",
+            vlines=vlines_fares
+        )
     else:
-        if group_var == "paytype":
-            return fig_mileage_paytype
-        elif group_var == "ratecode":
-            return fig_mileage_ratecode
-        else:
-            return fig_mileage_vendorid
+        return create_area_chart(
+            dfmile,
+            'daily_miles',
+            group_var,
+            facet_wrap=2 if group_var == 'ratecode' else 1,
+            title="Daily Yellow Cab Mileage, 2017–2024",
+            y_label="Miles Traveled",
+            vlines=vlines_mileage
+        )
 
 
 # Callback to toggle About text and graph visibility + button label
