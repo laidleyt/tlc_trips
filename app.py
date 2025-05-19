@@ -276,7 +276,24 @@ app.layout = dbc.Container([
         "width": "auto",
         "minWidth": "200px",
         "gap": "10px"
-    })
+    }),
+html.Script('''
+    document.addEventListener('DOMContentLoaded', function() {
+        const toggleBtn = document.getElementById('toggle-about-btn');
+        const graphDiv = document.getElementById('interactive-graph');
+
+        if (toggleBtn && graphDiv) {
+            toggleBtn.addEventListener('click', function() {
+                // Delay resize slightly to let DOM update
+                setTimeout(() => {
+                    if (window.Plotly && graphDiv) {
+                        Plotly.Plots.resize(graphDiv);
+                    }
+                }, 100);
+            });
+        }
+    });
+''')
 ], fluid=True)
 
 
