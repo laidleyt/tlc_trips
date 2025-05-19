@@ -177,31 +177,30 @@ app.layout = dbc.Container([
             'margin-bottom': 35
         }),
 
-        # Main graph container (initially visible)
         html.Div(
-            id='graph-wrapper',
-            style={
-                'overflowX': 'auto',
-                'width': '80vw',
-                'padding': '1rem',
-                'boxSizing': 'border-box',
-                'marginTop': '7rem',
-                'display': 'block'  # visible by default
-            },
-            children=[
-                dcc.Graph(
-                    id='interactive-graph',
+                id='graph-wrapper',
                     style={
-                        'minWidth': '600px',
-                        'height': '70vh',
-                        'maxHeight': '75vh',
-                        'overflow': 'hidden'
+                        'overflowX': 'hidden',  # no horizontal scroll
+                        'overflowY': 'auto',    # allow vertical scroll when needed
+                        'width': '80vw',
+                        'maxHeight': '700px',   # control max visible height
+                        'padding': '1rem',
+                        'boxSizing': 'border-box',
+                        'marginTop': '7rem',
+                        'display': 'block'      # visible by default
                     },
-                    config={'responsive': True}
-                )
-            ]
-        ),
-
+                    children=[
+                        dcc.Graph(
+                            id='interactive-graph',
+                            style={
+                                'minWidth': '600px',
+                                'height': '600px',
+                                'width': '100%'
+                            },
+                            config={'responsive': True}
+                        )
+                    ]
+                ),
         # About content container (hidden by default)
         html.Div(
             id='about-text',
