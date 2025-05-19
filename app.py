@@ -203,7 +203,7 @@ def update_graph(selected_data, selected_group):
     if selected_data == "fares":
         return create_area_chart(
             df2,
-            "totalfares",
+            "daily_fare",
             selected_group,
             4,
             "Daily Yellow Cab Revenue by Group Category",
@@ -213,7 +213,7 @@ def update_graph(selected_data, selected_group):
     else:
         return create_area_chart(
             dfmile,
-            "totalmileage",
+            "daily_miles",
             selected_group,
             3,
             "Daily Yellow Cab Mileage by Group Category",
