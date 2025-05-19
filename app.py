@@ -17,7 +17,7 @@ df2 = pd.read_csv('data/tlc_data.csv')  # read in summarized time series data
 
 # create plot function, plot each rev/mileage/category combo
 
-def create_area_chart(df, metric, var, facet_wrap, title, y_label, vlines=[]):
+def create_area_chart(df, metric, var, facet_wrap, title, y_label, vlines=[], shared_yaxes=False):
     filtered_df = df[df['var'] == var]
 
     fig = px.area(
@@ -29,6 +29,7 @@ def create_area_chart(df, metric, var, facet_wrap, title, y_label, vlines=[]):
         facet_col_wrap=facet_wrap
     )
 
+    # Add vertical lines
     for line in vlines:
         fig.add_vline(
             x=datetime.strptime(line['date'], "%Y-%m-%d").timestamp() * 1000,
@@ -38,15 +39,24 @@ def create_area_chart(df, metric, var, facet_wrap, title, y_label, vlines=[]):
             annotation_text=line['label']
         )
 
+    # Title and axes
     fig.update_layout(
         title=title,
         xaxis_title="Date",
         yaxis_title=y_label
     )
 
+    # Update all subplot y-axis titles
     for axis in fig.layout:
         if axis.startswith('yaxis'):
             fig.layout[axis].title.text = y_label
+
+    # Match y-axes across facets if specified
+    if shared_yaxes:
+        for i in range(2, len(fig.layout) + 1):
+            axis_name = f'yaxis{i}'
+            if axis_name in fig.layout:
+                fig.layout[axis_name].matches = 'y'
 
     return fig
 
@@ -69,38 +79,44 @@ dfmile = df2[(df2['dyear'] >= startmile) & (df2['dyear'] <= endmile)]
 fig_fares_paytype = create_area_chart(df2, 'daily_fare', 'paytype', facet_wrap=1,
     title="Daily Yellow Cab Fares, 2011-2024 <br> In 2025 US Dollars",
     y_label="Millions of USD",
-    vlines=vlines_fares
+    vlines=vlines_fares,
+    shared_yaxes=True
 )
 
 fig_fares_ratecode = create_area_chart(df2, 'daily_fare', 'ratecode', facet_wrap=2,
     title="Daily Yellow Cab Fares, 2011-2024 <br> In 2025 US Dollars",
     y_label="Millions of USD",
-    vlines=vlines_fares
+    vlines=vlines_fares,
+    shared_yaxes=True
 )
 
 fig_fares_vendorid = create_area_chart(df2, 'daily_fare', 'vendorid', facet_wrap=1,
     title="Daily Yellow Cab Fares, 2011-2024 <br> In 2025 US Dollars",
     y_label="Millions of USD",
-    vlines=vlines_fares
+    vlines=vlines_fares,
+    shared_yaxes=True
 )
 
 # Mileage
 fig_mileage_paytype = create_area_chart(dfmile, 'daily_miles', 'paytype', facet_wrap=1,
     title="Daily Yellow Cab Mileage, 2017-2024",
     y_label="Miles Traveled",
-    vlines=vlines_mileage
+    vlines=vlines_mileage,
+    shared_yaxes=True
 )
 
 fig_mileage_ratecode = create_area_chart(dfmile, 'daily_miles', 'ratecode', facet_wrap=2,
     title="Daily Yellow Cab Mileage, 2017-2024",
     y_label="Miles Traveled",
-    vlines=vlines_mileage
+    vlines=vlines_mileage,
+    shared_yaxes=True
 )
 
 fig_mileage_vendorid = create_area_chart(dfmile, 'daily_miles', 'vendorid', facet_wrap=1,
     title="Daily Yellow Cab Mileage, 2017-2024",
     y_label="Miles Traveled",
-    vlines=vlines_mileage
+    vlines=vlines_mileage,
+    shared_yaxes=True
 )
 
 
