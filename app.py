@@ -293,11 +293,11 @@ def update_graph_and_subhead(selected_data, selected_graph):
 
 @app.callback(
     [Output('graph-wrapper', 'style'),
-     Output('about-content', 'style'),
+     Output('about-text', 'style'),
      Output('about-toggle-btn', 'children')],
     [Input('about-toggle-btn', 'n_clicks')],
     [State('graph-wrapper', 'style'),
-     State('about-content', 'style')]
+     State('about-text', 'style')]
 )
 def toggle_about(n_clicks, graph_style, about_style):
     if not n_clicks:
