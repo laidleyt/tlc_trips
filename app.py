@@ -99,14 +99,13 @@ app = Dash(__name__, external_stylesheets=[dbc.themes.FLATLY])
 
 app.clientside_callback(
     """
-function(n_intervals) {
-    if (n_intervals > 0) {
-        setTimeout(() => {
+    function(n_intervals) {
+        if (n_intervals === 1) {
             window.dispatchEvent(new Event('resize'));
-        }, 100);  // delay 100ms to ensure DOM settled
+            return '';  // dummy return value, triggers no update
+        }
+        return window.dash_clientside.no_update;
     }
-    return window.dash_clientside.no_update;
-}
     """,
     Output('dummy-output', 'children'),
     Input('resize-interval', 'n_intervals')
@@ -116,7 +115,7 @@ server = app.server
 
 app.layout = dbc.Container([
     dcc.Store(id="show-graph-store", data=True),
-    dcc.Interval(id="resize-interval", interval=100, n_intervals=0, max_intervals=1, disabled=True),
+    dcc.Interval(id="resize-interval", interval=500, n_intervals=0, max_intervals=1, disabled=True),
     html.Div(id='dummy-output', style={'display': 'none'}),
 
     # Main content block (graph and controls)
@@ -323,12 +322,11 @@ def toggle_about(n_clicks, current_text):
                 'visibility': 'hidden',
                 'opacity': 0,
                 'height': '400px',
-                'minWidth': '600px',
+                'minWidth': '100%',
                 'transition': 'opacity 0.4s ease-in-out'
             },
             {'display': 'block'},  # about text shown normally
             True,  # disable interval during About to avoid resize noise
-            False  # graph hidden (store flag)
         )
     else:
         return (
@@ -337,12 +335,11 @@ def toggle_about(n_clicks, current_text):
                 'visibility': 'visible',
                 'opacity': 1,
                 'height': '400px',
-                'minWidth': '600px',
+                'minWidth': '100%',
                 'transition': 'opacity 0.4s ease-in-out'
             },
             {'display': 'none'},
             False,  # enable interval to trigger resize event once
-            True   # graph visible (store flag)
         )
 
 
