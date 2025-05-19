@@ -230,7 +230,7 @@ app.layout = dbc.Container([
         )
     ]),  # END main content container
 
-    html.Div(id="trigger-graph-redraw", style={"display": "none"}),
+    html.Div(id="trigger-graph-redraw_2", style={"display": "none"}),
                     dcc.Interval(
                     id="resize-interval",
                     interval=100,
