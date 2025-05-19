@@ -193,7 +193,8 @@ app.layout = dbc.Container([
                     id='interactive-graph',
                     style={
                         'minWidth': '600px',
-                        'height': '90vh',
+                        'height': '70vh',
+                        'maxHeight': '75vh',
                         'overflow': 'hidden'
                     },
                     config={'responsive': True}
