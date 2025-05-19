@@ -33,8 +33,15 @@ def create_area_chart(df, metric, var, facet_wrap, title, y_label, vlines=[], sh
 
     # Dynamically adjust figure height based on number of facets
     num_facets = filtered_df['group'].nunique()
-    base_height = 300  # You can tweak this per your visual preference
-    fig.update_layout(height=base_height * num_facets)
+    base_height = 200
+    max_height = 800
+    fig_height = min(base_height * num_facets, max_height)
+
+    fig.update_layout(height=fig_height,  margin=dict(t=60, b=40, l=40, r=40),
+    title=title,
+    xaxis_title="Date",
+    yaxis_title=y_label
+)
 
     # Add vertical lines
     for line in vlines:
@@ -186,7 +193,8 @@ app.layout = dbc.Container([
                     id='interactive-graph',
                     style={
                         'minWidth': '600px',
-                        'height': '400px'
+                        'height': '90vh',
+                        'overflow': 'hidden'
                     },
                     config={'responsive': True}
                 )
