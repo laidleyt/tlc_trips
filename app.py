@@ -184,17 +184,17 @@ app.layout = dbc.Container([
 
         # About content container (hidden by default)
         html.Div(
-            id='about-content',
+            id='about-text',
             style={
                 'width': '80vw',
                 'padding': '1rem',
                 'boxSizing': 'border-box',
                 'marginTop': '7rem',
-                'display': 'none',  # hidden initially
-                'color': '#333333',
-                'backgroundColor': '#f9f9f9',
-                'borderRadius': '8px',
-                'fontSize': '12px',
+                'display': 'none',
+                'color': '#ffffff',         
+                'backgroundColor': '#6c757d',  # match CSS bg color
+                'borderRadius': '10px',
+                'fontSize': '15px',
                 'lineHeight': '1.0',
                 'maxWidth': '700px'
             },
