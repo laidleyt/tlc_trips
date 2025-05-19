@@ -18,16 +18,23 @@ df2 = pd.read_csv('data/tlc_data.csv')  # read in summarized time series data
 # create plot function, plot each rev/mileage/category combo
 
 def create_area_chart(df, metric, var, facet_wrap, title, y_label, vlines=[], shared_yaxes=False):
+    # Filter for the selected variable
     filtered_df = df[df['var'] == var]
 
+    # Create the area chart with vertically stacked facets
     fig = px.area(
         filtered_df,
         x='dyear',
         y=metric,
         color='group',
         facet_col='group',
-        facet_col_wrap=facet_wrap
+        facet_col_wrap=1  # Stack vertically
     )
+
+    # Dynamically adjust figure height based on number of facets
+    num_facets = filtered_df['group'].nunique()
+    base_height = 300  # You can tweak this per your visual preference
+    fig.update_layout(height=base_height * num_facets)
 
     # Add vertical lines
     for line in vlines:
@@ -39,26 +46,14 @@ def create_area_chart(df, metric, var, facet_wrap, title, y_label, vlines=[], sh
             annotation_text=line['label']
         )
 
-    # Title and axes
+    # Add title and axis labels
     fig.update_layout(
         title=title,
         xaxis_title="Date",
         yaxis_title=y_label
     )
 
-    # Update all subplot y-axis titles
-    for axis_name in fig.layout:
-        if axis_name.startswith('yaxis'):
-            fig.layout[axis_name].title.text = y_label
-
-    # Match y-axes across facets if specified
-    if shared_yaxes:
-        for axis_name in fig.layout:
-            if axis_name.startswith('yaxis') and axis_name != 'yaxis':
-                fig.layout[axis_name].matches = 'y'
-
-    return fig  
-
+    return fig
 
 # Set up vlines
 vlines_fares = [
