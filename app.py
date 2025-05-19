@@ -99,12 +99,14 @@ app = Dash(__name__, external_stylesheets=[dbc.themes.FLATLY])
 
 app.clientside_callback(
     """
-    function(n_intervals) {
-        if (n_intervals > 0) {
+function(n_intervals) {
+    if (n_intervals > 0) {
+        setTimeout(() => {
             window.dispatchEvent(new Event('resize'));
-        }
-        return window.dash_clientside.no_update;
+        }, 100);  // delay 100ms to ensure DOM settled
     }
+    return window.dash_clientside.no_update;
+}
     """,
     Output('dummy-output', 'children'),
     Input('resize-interval', 'n_intervals')
@@ -180,7 +182,7 @@ app.layout = dbc.Container([
                 dcc.Graph(
                     id='interactive-graph',
                     style={
-                        'minWidth': '600px',
+                        'minWidth': '100%',
                         'height': '400px',
                         'display': 'block'
                     },
@@ -312,20 +314,35 @@ def update_graph(data_type, group_var, show_graph_flag):
     prevent_initial_call=True,
     allow_duplicate=True
 )
+
 def toggle_about(n_clicks, current_text):
     if current_text == "About":
         return (
             "Back",
-            {"display": "none"},
-            {"display": "block"},
-            True
+            {
+                'visibility': 'hidden',
+                'opacity': 0,
+                'height': '400px',
+                'minWidth': '600px',
+                'transition': 'opacity 0.4s ease-in-out'
+            },
+            {'display': 'block'},  # about text shown normally
+            True,  # disable interval during About to avoid resize noise
+            False  # graph hidden (store flag)
         )
     else:
         return (
             "About",
-            {"display": "block"},
-            {"display": "none"},
-            False
+            {
+                'visibility': 'visible',
+                'opacity': 1,
+                'height': '400px',
+                'minWidth': '600px',
+                'transition': 'opacity 0.4s ease-in-out'
+            },
+            {'display': 'none'},
+            False,  # enable interval to trigger resize event once
+            True   # graph visible (store flag)
         )
 
 
@@ -339,6 +356,16 @@ def update_subhead(data_type):
     else:
         return ["Manhattan Yellow Cabs,", html.Br(), "2011–2024"]
 
+@app.callback(
+    Output('resize-interval', 'disabled'),
+    Input('resize-interval', 'n_intervals'),
+    prevent_initial_call=True
+)
+def disable_interval_after_fire(n_intervals):
+    # Once the interval fires once (n_intervals=1), disable it again
+    if n_intervals and n_intervals > 0:
+        return True
+    return dash.no_update
 
 if __name__ == '__main__':
     app.run_server(debug=True)
