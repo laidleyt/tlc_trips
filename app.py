@@ -102,12 +102,12 @@ app.clientside_callback(
     function(n_intervals) {
         if (n_intervals === 1) {
             window.dispatchEvent(new Event('resize'));
-            return '';  // dummy return value, triggers no update
+            return '';
         }
         return window.dash_clientside.no_update;
     }
     """,
-    Output('dummy-output', 'children'),
+    Output('dummy-output-resize', 'children'),
     Input('resize-interval', 'n_intervals')
 )
 
@@ -115,7 +115,8 @@ server = app.server
 
 app.layout = dbc.Container([
     dcc.Store(id="show-graph-store", data=True),
-    html.Div(id='dummy-output', style={'display': 'none'}),
+    html.Div(id='dummy-output-resize', style={'display': 'none'}),
+    html.Div(id='dummy-output-click', style={'display': 'none'}),
 
     # Main content block (graph and controls)
     html.Div([  
@@ -402,7 +403,7 @@ app.clientside_callback(
         return "";
     }
     """,
-    Output('dummy-output', 'children'),  # Create a dummy hidden Div with this ID
+    Output('dummy-output-click', 'children'),
     Input('toggle-about-btn', 'n_clicks'),
     prevent_initial_call=True
 )
