@@ -200,14 +200,14 @@ app.layout = dbc.Container([
             },
             children=[
                 html.P("Thanks for visiting! To create this dashboard, I began by downloading the full time series "
-                       "of individual yellow cab trips from 2011–2025 in parquet file format. A huge thank you to the"
-                       "hard work of the Taxi and Limo Commission and NYC Open Data for maintaining these data and making"
+                       "of individual yellow cab trips from 2011–2025 in parquet file format. A huge thank you to the "
+                       "hard work of the Taxi and Limo Commission and NYC Open Data for maintaining these data and making "
                        "them available for public use and analysis.", style={'marginBottom':'0.1rem'}),
                 html.P([
                     "You can access these files on the TLC’s official site here: ",
                     html.A("TLC Trip Data", href="https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page", target="_blank")
                 ], style={'marginBottom':'0.1rem'}),
-                html.P("From there, I used DuckDB in Python (also available in R, and coming to SAS summer '25 I believe) to query" 
+                html.P("From there, I used DuckDB in Python (also available in R, and coming to SAS summer '25 I believe) to query " 
                        "the parquet files using conventional SQL syntax, pull relevant variables, "
                        "and summarize the daily totals in revenue and mileage.", style={'marginBottom':'0.1rem'}),
                 html.P("Because the total dataset contains over a billion rows (and over 100GB uncompressed), conventional tools like pandas in Python are "
@@ -220,7 +220,7 @@ app.layout = dbc.Container([
                     html.A("GitHub Repo", href="https://github.com/laidleyt/tlc_trips", target="_blank")
                 ], style={'marginBottom':'0.1rem'}),
                 html.P([
-                    "Feel free to connect on LinkedIn if you have questions about this, or would like some elaboration on the front end"
+                    "Feel free to connect on LinkedIn if you have questions about this, or would like some elaboration on the front end "
                     "parquet ingestion/calculations: ",
                     html.A("Tom Laidley", href="https://linkedin.com/in/tomlaidley", target="_blank")
                 ], style={'marginBottom':'0.1rem'}),
