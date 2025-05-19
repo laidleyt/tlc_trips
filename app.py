@@ -1,13 +1,21 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Sat May 17 09:20:14 2025
+"""
+
 import os
 import pandas as pd
+import plotly.io as pio
 import plotly.express as px
 from datetime import datetime
-from dash import Dash, html, dcc, Input, Output, State
+from dash import Dash, html, dcc
 import dash_bootstrap_components as dbc
+from dash import Input, Output
+from dash.dependencies import State
 
-# Load your summarized time series data
-df2 = pd.read_csv('data/tlc_data.csv')
+df2 = pd.read_csv('data/tlc_data.csv')  # read in summarized time series data
 
+# create plot function, plot each rev/mileage/category combo
 def create_area_chart(df, metric, var, facet_wrap, title, y_label, vlines=[]):
     filtered_df = df[df['var'] == var]
 
@@ -41,7 +49,7 @@ def create_area_chart(df, metric, var, facet_wrap, title, y_label, vlines=[]):
 
     return fig
 
-# Vertical lines for important dates
+# Set up vlines
 vlines_fares = [
     {"date": "2011-05-04", "color": "black", "dash": "dash", "label": "Uber Intro'd<br>NYC"},
     {"date": "2020-03-13", "color": "#39FF14", "label": "COVID-19 Declared <br> Natl Emergency"}
@@ -51,25 +59,68 @@ vlines_mileage = [
     {"date": "2020-03-13", "color": "#39FF14", "label": "COVID-19 Declared <br> Natl Emergency"}
 ]
 
-# Filter mileage data from 2017 onwards
+# Filtered mileage DF
 startmile = '2017-01-01'
 endmile = '2024-12-31'
 dfmile = df2[(df2['dyear'] >= startmile) & (df2['dyear'] <= endmile)]
 
+# Fares
+fig_fares_paytype = create_area_chart(df2, 'daily_fare', 'paytype', facet_wrap=1,
+    title="Daily Yellow Cab Fares, 2011-2024 <br> In 2025 US Dollars",
+    y_label="Millions of USD",
+    vlines=vlines_fares
+)
+
+fig_fares_ratecode = create_area_chart(df2, 'daily_fare', 'ratecode', facet_wrap=2,
+    title="Daily Yellow Cab Fares, 2011-2024 <br> In 2025 US Dollars",
+    y_label="Millions of USD",
+    vlines=vlines_fares
+)
+
+fig_fares_vendorid = create_area_chart(df2, 'daily_fare', 'vendorid', facet_wrap=1,
+    title="Daily Yellow Cab Fares, 2011-2024 <br> In 2025 US Dollars",
+    y_label="Millions of USD",
+    vlines=vlines_fares
+)
+
+# Mileage
+fig_mileage_paytype = create_area_chart(dfmile, 'daily_miles', 'paytype', facet_wrap=1,
+    title="Daily Yellow Cab Mileage, 2017-2024",
+    y_label="Miles Traveled",
+    vlines=vlines_mileage
+)
+
+fig_mileage_ratecode = create_area_chart(dfmile, 'daily_miles', 'ratecode', facet_wrap=2,
+    title="Daily Yellow Cab Mileage, 2017-2024",
+    y_label="Miles Traveled",
+    vlines=vlines_mileage
+)
+
+fig_mileage_vendorid = create_area_chart(dfmile, 'daily_miles', 'vendorid', facet_wrap=1,
+    title="Daily Yellow Cab Mileage, 2017-2024",
+    y_label="Miles Traveled",
+    vlines=vlines_mileage
+)
+
+
+################################################################################################# create dashboard & integrate figures
+
 app = Dash(__name__, external_stylesheets=[dbc.themes.FLATLY])
 
-server = app.server
-
 app.layout = dbc.Container([
-    # Header and controls
     html.Div([
         html.Div([
-            html.H1("Daily Revenue & Mileage"),
-            html.P(["Manhattan Yellow Cabs,", html.Br(), "2011-2024"], id='subhead-text')
-        ], style={"verticalAlign": "top", "height": 155, "width": 500}),
+            html.H1(["Daily Revenue & Mileage"]),
+            html.P(["Manhattan Yellow Cabs,", html.Br(), "2011-2024"],
+                   id='subhead-text')
+        ], style={
+            "vertical-alignment": "top",
+            "height": 155,
+            "width": 500
+        }),
 
         html.Div([
-            dbc.RadioItems(
+            html.Div(dbc.RadioItems(
                 id='data-select',
                 className='btn-group',
                 inputClassName='btn-check',
@@ -78,10 +129,14 @@ app.layout = dbc.Container([
                 options=[
                     {"label": "Revenue", "value": "fares"},
                     {"label": "Mileage", "value": "mileage"}],
-                value="fares",
-                style={'width': 160}
-            )
-        ], style={'marginLeft': 15, 'marginRight': 15, 'display': 'flex'}),
+                value="fares"
+            ), style={'width': 160}),
+            html.Div(style={'width': 160})
+        ], style={
+            'margin-left': 15,
+            'margin-right': 15,
+            'display': 'flex'
+        }),
 
         html.Div([
             html.H2('Group Category:'),
@@ -94,12 +149,14 @@ app.layout = dbc.Container([
                          value='paytype',
                          clearable=False,
                          optionHeight=40,
-                         className='customDropdown',
-                         style={'width': 420, 'marginLeft': 15, 'marginTop': 15, 'marginBottom': 35}
-            )
-        ]),
+                         className='customDropdown')
+        ], style={
+            'width': 420,
+            'margin-left': 15,
+            'margin-top': 15,
+            'margin-bottom': 35
+        }),
 
-        # Graph container (always visible)
         html.Div(
             id='graph-wrapper',
             style={
@@ -112,126 +169,142 @@ app.layout = dbc.Container([
             children=[
                 dcc.Graph(
                     id='interactive-graph',
-                    style={'minWidth': '100%', 'display': 'block', 'opacity': 1},
+                    style={
+                        'minWidth': '600px',
+                        'height': '400px'
+                    },
                     config={'responsive': True}
+                ),
+                html.Div(
+                    id='about-text',
+                    style={
+                        'display': 'none',
+                        'marginTop': '2rem',
+                        'fontSize': '15px',
+                        'maxWidth': '750px',
+                        'lineHeight': '1.6',
+                        'textAlign': 'left'
+                    },
+                    children=[
+                        html.P("Thanks for visiting. To create this dashboard, I began by downloading the full time series "
+                               "of individual yellow cab trips from 2011–2025 in parquet file format."),
+                        html.P([
+                            "You can access these files on the TLC’s official site here: ",
+                            html.A("TLC Trip Data", href="https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page", target="_blank")
+                        ]),
+                        html.P("From there, I used DuckDB in Python (also available for R) to query the parquet files, pull relevant variables, "
+                               "and summarize the daily totals in revenue and mileage."),
+                        html.P("Because the total dataset contains over a billion rows and ~30GB even in Parquet, conventional tools like pandas are "
+                               "inefficient or even unusable. DuckDB uses SQL syntax and avoids reading full datasets into memory."),
+                        html.P("I highly recommend DuckDB — it functions as a kind of 'mini data warehouse', even for small business use."),
+                        html.P("The visualizations were created with Plotly and embedded here using Plotly Dash."),
+                        html.P([
+                            "GitHub code is available here: ",
+                            html.A("GitHub Repo", href="https://github.com/laidleyt/tlc_trips", target="_blank")
+                        ]),
+                        html.P([
+                            "Feel free to connect on LinkedIn: ",
+                            html.A("Tom Laidley", href="https://linkedin.com/in/tomlaidley", target="_blank")
+                        ]),
+                        html.P("Thanks!")
+                    ]
                 )
             ]
         ),
-    ]),
 
-    # Fixed bottom bar with About button and GitHub link + About modal
-    html.Div([
-        dbc.Button("About", id="open-about", color="secondary", outline=True, style={
-            "backgroundColor": "#6c757d",
-            "color": "white",
-            "border": "none",
-            "boxShadow": "none",
-            "fontWeight": "600",
-            "padding": "0.375rem 0.75rem"
-        }),
-        html.A(
-            "GitHub Repo",
-            href="https://github.com/laidleyt/tlc_trips",
-            target="_blank",
-            className="btn btn-darkgray",
+        html.Div(
             style={
-                "backgroundColor": "#6c757d",
-                "color": "white",
-                "border": "none",
-                "textDecoration": "none",
-                "padding": "0.375rem 0.75rem",
-                "fontWeight": "600"
-            }
-        ),
-
-        dbc.Modal(
-            [
-                dbc.ModalHeader(dbc.ModalTitle("About This Dashboard")),
-                dbc.ModalBody([
-                    html.P("Thanks for visiting. To create this dashboard, I began by downloading the full time series "
-                           "of individual yellow cab trips from 2011–2025 in parquet file format.", style={'marginBottom':'0.5rem'}),
-                    html.P([
-                        "You can access these files on the TLC’s official site here: ",
-                        html.A("TLC Trip Data", href="https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page", target="_blank")
-                    ], style={'marginBottom':'0.5rem'}),
-                    html.P("From there, I used DuckDB in Python (also available for R) to query the parquet files, pull relevant variables, "
-                           "and summarize the daily totals in revenue and mileage.", style={'marginBottom':'0.5rem'}),
-                    html.P("Because the total dataset contains over a billion rows and ~30GB even in Parquet, conventional tools like pandas are "
-                           "inefficient or even unusable. DuckDB uses SQL syntax and avoids reading full datasets into memory.", style={'marginBottom':'0.5rem'}),
-                    html.P("I highly recommend DuckDB — it functions as a kind of 'mini data warehouse', even for small business use.", style={'marginBottom':'0.5rem'}),
-                    html.P("The visualizations were created with Plotly and embedded here using Plotly Dash.", style={'marginBottom':'0.5rem'}),
-                    html.P([
-                        "GitHub code is available here: ",
-                        html.A("GitHub Repo", href="https://github.com/laidleyt/tlc_trips", target="_blank")
-                    ], style={'marginBottom':'0.5rem'}),
-                    html.P([
-                        "Feel free to connect on LinkedIn: ",
-                        html.A("Tom Laidley", href="https://linkedin.com/in/tomlaidley", target="_blank")
-                    ], style={'marginBottom':'0.5rem'}),
-                    html.P("Thanks!", style={'marginBottom':'0'})
-                ]),
-                dbc.ModalFooter(
-                    dbc.Button("Close", id="close-about", className="ml-auto")
+                'marginTop': '10px',
+                'marginLeft': '15px',
+                'display': 'flex',
+                'gap': '10px'
+            },
+            children=[
+                html.Button("About", id="about-button", n_clicks=0, style={
+                    'padding': '8px 16px',
+                    'backgroundColor': '#6c757d',
+                    'color': 'white',
+                    'borderRadius': '5px',
+                    'textDecoration': 'none',
+                    'fontSize': '14px',
+                    'fontWeight': 'bold',
+                    'border': 'none'
+                }),
+                html.A(
+                    "GitHub Repo",
+                    href="https://github.com/laidleyt/tlc_trips",
+                    target="_blank",
+                    style={
+                        'padding': '8px 16px',
+                        'backgroundColor': '#007BFF',
+                        'color': 'white',
+                        'borderRadius': '5px',
+                        'textDecoration': 'none',
+                        'fontSize': '14px',
+                        'fontWeight': 'bold',
+                    }
                 )
-            ],
-            id="modal-about",
-            is_open=False,
-            size="lg",
-            centered=True,
-            scrollable=True,
+            ]
         )
-    ], style={
-        "position": "fixed",
-        "bottom": "10px",
-        "left": "50%",
-        "transform": "translateX(-50%)",
-        "zIndex": "1000",
-        "display": "flex",
-        "justifyContent": "center",
-        "width": "auto",
-        "gap": "1rem"
-    })
-], fluid=True)
-
-
-@app.callback(
-    Output("interactive-graph", "figure"),
-    Input("data-select", "value"),
-    Input("graph-type", "value"),
+    ])
+],  
+    fluid=True,
+    style={'display': 'flex'},
+    className='dashboard-container'
 )
-def update_graph(selected_data, selected_group):
-    if selected_data == "fares":
-        return create_area_chart(
-            df2,
-            "daily_fare",
-            selected_group,
-            4,
-            "Daily Yellow Cab Revenue by Group Category",
-            "Revenue (Millions $)",
-            vlines=vlines_fares
-        )
+
+# Callback to toggle graph/About and button label
+@app.callback(
+    [Output('interactive-graph', 'style'),
+     Output('about-text', 'style'),
+     Output('about-button', 'children')],
+    [Input('about-button', 'n_clicks')],
+    [State('interactive-graph', 'style'),
+     State('about-text', 'style'),
+     State('about-button', 'children')]
+)
+def toggle_about(n_clicks, graph_style, about_style, button_text):
+    if n_clicks % 2 == 1:
+        about_style_updated = about_style.copy()
+        about_style_updated['display'] = 'block'
+        return {'display': 'none'}, about_style_updated, "Back"
     else:
-        return create_area_chart(
-            dfmile,
-            "daily_miles",
-            selected_group,
-            3,
-            "Daily Yellow Cab Mileage by Group Category",
-            "Miles (Millions)",
-            vlines=vlines_mileage
-        )
+        graph_style_updated = graph_style.copy()
+        graph_style_updated['display'] = 'block'
+        return graph_style_updated, {'display': 'none'}, "About"
 
-
+# Callback to update graph and subhead based on selected data
 @app.callback(
-    Output("modal-about", "is_open"),
-    [Input("open-about", "n_clicks"), Input("close-about", "n_clicks")],
-    [State("modal-about", "is_open")]
+    [Output('interactive-graph', 'figure'),
+     Output('subhead-text', 'children')],
+    [Input('data-select', 'value'),
+     Input('graph-type', 'value')]
 )
-def toggle_about_modal(open_clicks, close_clicks, is_open):
-    if open_clicks or close_clicks:
-        return not is_open
-    return is_open
+def update_graph_and_subhead(selected_data, selected_graph):
+    # Choose figure
+    if selected_data == 'fares':
+        if selected_graph == 'paytype':
+            fig = fig_fares_paytype
+        elif selected_graph == 'vendorid':
+            fig = fig_fares_vendorid
+        elif selected_graph == 'ratecode':
+            fig = fig_fares_ratecode
+        subhead = ["Manhattan Yellow Cabs,", html.Br(), "2011–2024"]
+    elif selected_data == 'mileage':
+        if selected_graph == 'paytype':
+            fig = fig_mileage_paytype
+        elif selected_graph == 'vendorid':
+            fig = fig_mileage_vendorid
+        elif selected_graph == 'ratecode':
+            fig = fig_mileage_ratecode
+        subhead = ["Manhattan Yellow Cabs,", html.Br(), "2017–2024"]
+    else:
+        fig = px.scatter(title="Unknown selection")
+        subhead = "Manhattan Yellow Cabs"
 
+    return fig, subhead
 
-if __name__ == '__main__':
-    app.run_server(debug=True)
+server = app.server
+
+if __name__ == "__main__":
+    app.run(debug=True, port=8050)
