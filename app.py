@@ -318,30 +318,16 @@ def toggle_about(n_clicks, current_text):
             "Back",
             {"display": "none"},
             {"display": "block"},
-            True,
-            {"height": "0", "overflow": "hidden", "padding": "0", "margin": "0"}
+            True
         )
     else:
         return (
             "About",
             {"display": "block"},
             {"display": "none"},
-            False,
-            {
-                'overflowX': 'auto',
-                'width': '80vw',
-                'padding': '1rem',
-                'boxSizing': 'border-box',
-                'marginTop': '7rem'
-            }
+            False
         )
 
-
-@app.callback(
-    Output("interactive-graph", "style", allow_duplicate=True),
-    Input("resize-interval", "n_intervals"),
-    prevent_initial_call=True
-)
 
 @app.callback(
     Output('subhead-text', 'children'),
@@ -352,13 +338,11 @@ def update_subhead(data_type):
         return ["Manhattan Yellow Cabs,", html.Br(), "2017–2024"]
     else:
         return ["Manhattan Yellow Cabs,", html.Br(), "2011–2024"]
-def force_graph_resize(n):
-    return {"display": "block"}
 
 
 if __name__ == '__main__':
     app.run_server(debug=True)
 
-    app.run_server(debug=True)
+
 
 
