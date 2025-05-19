@@ -115,7 +115,6 @@ server = app.server
 
 app.layout = dbc.Container([
     dcc.Store(id="show-graph-store", data=True),
-    dcc.Interval(id="resize-interval", interval=500, n_intervals=0, max_intervals=1, disabled=True),
     html.Div(id='dummy-output', style={'display': 'none'}),
 
     # Main content block (graph and controls)
@@ -366,6 +365,24 @@ def disable_interval_after_fire(n_intervals):
     if n_intervals and n_intervals > 0:
         return True
     return dash.no_update
+
+app.clientside_callback(
+    """
+    function(n_clicks) {
+        setTimeout(function() {
+            var graph = document.getElementById('interactive-graph');
+            if (graph) {
+                window.dispatchEvent(new Event('resize'));
+                Plotly.Plots.resize(graph);
+            }
+        }, 300);
+        return "";
+    }
+    """,
+    Output('dummy-output', 'children'),  # Create a dummy hidden Div with this ID
+    Input('toggle-about-btn', 'n_clicks'),
+    prevent_initial_call=True
+)
 
 if __name__ == '__main__':
     app.run_server(debug=True)
