@@ -46,17 +46,16 @@ def create_area_chart(df, metric, var, facet_wrap, title, y_label, vlines=[], sh
         yaxis_title=y_label
     )
 
-    # Update all subplot y-axis titles
-    for axis in fig.layout:
-        if axis.startswith('yaxis'):
-            fig.layout[axis].title.text = y_label
+# Update all subplot y-axis titles
+for axis in fig.layout:
+    if axis.startswith('yaxis'):
+        fig.layout[axis].title.text = y_label
 
-    # Match y-axes across facets if specified
-    if shared_yaxes:
-        for i in range(2, len(fig.layout) + 1):
-            axis_name = f'yaxis{i}'
-            if axis_name in fig.layout:
-                fig.layout[axis_name].matches = 'y'
+# Match y-axes across facets if specified
+if shared_yaxes:
+    for axis in fig.layout:
+        if axis.startswith('yaxis') and axis != 'yaxis':  # skip the first/main y-axis
+            fig.layout[axis].matches = 'y'
 
     return fig
 
