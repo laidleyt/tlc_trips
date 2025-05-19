@@ -228,7 +228,13 @@ app.layout = dbc.Container([
         )
     ]),  # END main content container
 
-    # Fixed position footer with About and GitHub buttons
+    html.Div(id="trigger-graph-redraw", style={"display": "none"}),
+                    dcc.Interval(
+                    id="resize-interval",
+                    interval=100,
+                    max_intervals=1,
+                    disabled=True
+                    ),
     html.Div([
         dbc.Button(
             "About",
