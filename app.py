@@ -92,22 +92,18 @@ fig_mileage_vendorid = create_area_chart(dfmile, 'daily_miles', 'vendorid', face
     vlines=vlines_mileage
 )
 
-
-############################################################################################## dash component
-
 app = Dash(__name__, external_stylesheets=[dbc.themes.FLATLY])
 
 app.clientside_callback(
     """
     function(n_intervals) {
-        if (n_intervals === 1) {
+        if (n_intervals > 0) {
             window.dispatchEvent(new Event('resize'));
-            return '';
         }
         return window.dash_clientside.no_update;
     }
     """,
-    Output('dummy-output-resize', 'children'),
+    Output('dummy-output', 'children'),
     Input('resize-interval', 'n_intervals')
 )
 
@@ -115,14 +111,19 @@ server = app.server
 
 app.layout = dbc.Container([
     dcc.Store(id="show-graph-store", data=True),
-    html.Div(id='dummy-output-resize', style={'display': 'none'}),
-    html.Div(id='dummy-output-click', style={'display': 'none'}),
-
-    # Main content block (graph and controls)
-    html.Div([  
+    dcc.Interval(
+        id="resize-interval",
+        interval=100,  # milliseconds
+        n_intervals=0,
+        max_intervals=1,
+        disabled=True
+    ),
+    html.Div(id='dummy-output', style={'display': 'none'}),
+    html.Div([
         html.Div([
             html.H1(["Daily Revenue & Mileage"]),
-            html.P(["Manhattan Yellow Cabs,", html.Br(), "2011-2024"], id='subhead-text')
+            html.P(["Manhattan Yellow Cabs,", html.Br(), "2011-2024"],
+                   id='subhead-text')
         ], style={
             "verticalAlign": "top",
             "height": 155,
@@ -181,9 +182,9 @@ app.layout = dbc.Container([
                 dcc.Graph(
                     id='interactive-graph',
                     style={
-                        'minWidth': '100%',
-                        'display': 'block',
-                        'opacity':1,
+                        'minWidth': '600px',
+                        'height': '400px',
+                        'display': 'block'  # initially visible
                     },
                     config={'responsive': True}
                 ),
@@ -199,10 +200,10 @@ app.layout = dbc.Container([
                         'color': 'white',
                         'backgroundColor': '#6c757d',
                         'padding': '1.5rem',
-                        'borderRadius': '10px',
+                        'borderRadius':'10px',
                         'boxShadow': '0 2px 8px rgba(0, 0, 0, 0.1)'
                     },
-                    children=[  
+                    children=[
                         html.P("Thanks for visiting. To create this dashboard, I began by downloading the full time series "
                                "of individual yellow cab trips from 2011–2025 in parquet file format.", style={'marginBottom':'0.5rem'}),
                         html.P([
@@ -224,77 +225,55 @@ app.layout = dbc.Container([
                             html.A("Tom Laidley", href="https://linkedin.com/in/tomlaidley", target="_blank")
                         ], style={'marginBottom':'0.5rem'}),
                         html.P("Thanks!", style={'marginBottom':'0'})
-                     ]  
+                    ]
                 )
             ]
-        )
-    ]),  # END main content container
-
-    html.Div(id="trigger-graph-redraw_2", style={"display": "none"}),
-                    dcc.Interval(
-                    id="resize-interval",
-                    interval=100,
-                    max_intervals=1,
-                    disabled=True
-                    ),
-    html.Div([
-        dbc.Button(
-            "About",
-            id="toggle-about-btn",
-            color="secondary",
-            outline=True,
-            style={
-                "backgroundColor": "#6c757d",
-                "color": "white",
-                "border": "none",
-                "boxShadow": "none",
-                "fontWeight": "600",
-                "padding": "0.375rem 0.75rem"
-            }
         ),
-        html.A(
-            "GitHub Repo",
-            href="https://github.com/laidleyt/tlc_trips",
-            target="_blank",
-            className="btn btn-darkgray",
-            style={
-                "backgroundColor": "#6c757d",
-                "color": "white",
-                "border": "none",
-                "textDecoration": "none",
-                "padding": "0.375rem 0.75rem",
-                "fontWeight": "600"
-            }
-        )
-    ], style={
-        "position": "fixed",
-        "bottom": "10px",
-        "left": "50%",
-        "transform": "translateX(-50%)",
-        "zIndex": "1000",
-        "display": "flex",
-        "justifyContent": "center",
-        "width": "auto",
-        "minWidth": "200px",
-        "gap": "10px"
-    }),
-html.Script('''
-    document.addEventListener('DOMContentLoaded', function() {
-        const toggleBtn = document.getElementById('toggle-about-btn');
-        const graphDiv = document.getElementById('interactive-graph');
 
-        if (toggleBtn && graphDiv) {
-            toggleBtn.addEventListener('click', function() {
-                // Delay resize slightly to let DOM update
-                setTimeout(() => {
-                    if (window.Plotly && graphDiv) {
-                        Plotly.Plots.resize(graphDiv);
-                    }
-                }, 100);
-            });
-        }
-    });
-''')
+        # Fixed position About and GitHub buttons
+        html.Div([
+            dbc.Button(
+                "About",
+                id="toggle-about-btn",
+                color="secondary",
+                outline=True,
+                style={
+        "backgroundColor": "#6c757d",
+        "color": "white",
+        "border": "none",
+        "boxShadow": "none",
+        "fontWeight": "600",
+        "padding": "0.375rem 0.75rem"
+    }
+            ),
+            html.A(
+                "GitHub Repo",
+                href="https://github.com/laidleyt/tlc_trips",
+                target="_blank",
+                className="btn btn-darkgray",
+                style={
+        "backgroundColor": "#6c757d",
+        "color": "white",
+        "border": "none",
+        "textDecoration": "none",
+        "padding": "0.375rem 0.75rem",
+        "fontWeight": "600"
+    }
+            )
+        ], style={
+            "position": "fixed",
+            "bottom": "10px",
+            "left": "50%",
+            "transform": "translateX(-50%)",
+            "zIndex": "1000",
+            "display": "flex",
+            "justifyContent": "center",
+            "width": "auto",
+            "minWidth": "200px",
+            "gap": "10px"
+        })
+
+    ])
 ], fluid=True)
 
 
@@ -302,33 +281,27 @@ html.Script('''
     Output('interactive-graph', 'figure'),
     Input('data-select', 'value'),
     Input('graph-type', 'value'),
-    Input('show-graph-store', 'data')  # Triggers re-render when toggling "Back"
+    Input('show-graph-store', 'data')  # NEW: triggers re-render on "Back"
 )
 def update_graph(data_type, group_var, show_graph_flag):
     if not show_graph_flag:
+        # About is visible, skip graph update
         return dash.no_update
 
     if data_type == "fares":
-        return create_area_chart(
-            df2,
-            'daily_fare',
-            group_var,
-            facet_wrap=2 if group_var == 'ratecode' else 1,
-            title="Daily Yellow Cab Fares, 2011–2024<br>In 2025 US Dollars",
-            y_label="Millions of USD",
-            vlines=vlines_fares
-        )
+        if group_var == "paytype":
+            return fig_fares_paytype
+        elif group_var == "ratecode":
+            return fig_fares_ratecode
+        else:
+            return fig_fares_vendorid
     else:
-        return create_area_chart(
-            dfmile,
-            'daily_miles',
-            group_var,
-            facet_wrap=2 if group_var == 'ratecode' else 1,
-            title="Daily Yellow Cab Mileage, 2017–2024",
-            y_label="Miles Traveled",
-            vlines=vlines_mileage
-        )
-
+        if group_var == "paytype":
+            return fig_mileage_paytype
+        elif group_var == "ratecode":
+            return fig_mileage_ratecode
+        else:
+            return fig_mileage_vendorid
 
 # Callback to toggle About text and graph visibility + button label
 @app.callback(
@@ -341,58 +314,20 @@ def update_graph(data_type, group_var, show_graph_flag):
     prevent_initial_call=True,
     allow_duplicate=True
 )
-
 def toggle_about(n_clicks, current_text):
     if current_text == "About":
-        return (
-            "Back",
-            {
-                'display': 'none',          # Hide graph when About text is showing
-                'pointerEvents': 'none',
-                'height': '0px',
-                'minWidth': '100%',
-                'transition': 'opacity 0.4s ease-in-out'
-            },
-            {'display': 'block'},          # Show About text
-            True,                         # Disable interval during About
-        )
+        return "Back", {"display": "block", "opacity": 0}, {"display": "block", "opacity": 1}, True
     else:
-        return (
-            "About",
-            {
-                'display': 'block',          # Show graph when About text hidden
-                'opacity': 1,
-                'minWidth': '100%',
-                'transition': 'opacity 0.4s ease-in-out'
-            },
-            {'display': 'none'},          # Hide About text
-            False,                        # Enable interval to trigger resize event once
-        )
+        return "About", {"display": "block", "opacity": 1}, {"display": "none", "opacity": 0}, False
 
 @app.callback(
-    Output('subhead-text', 'children'),
-    Input('data-select', 'value')
-)
-def update_subhead(data_type):
-    if data_type == 'mileage':
-        return ["Manhattan Yellow Cabs,", html.Br(), "2017–2024"]
-    else:
-        return ["Manhattan Yellow Cabs,", html.Br(), "2011–2024"]
-
-@app.callback(
-    Output('resize-interval', 'disabled'),
-    Input('resize-interval', 'n_intervals'),
+    Output("interactive-graph", "style", allow_duplicate=True),
+    Input("resize-interval", "n_intervals"),
     prevent_initial_call=True
 )
-def disable_interval_after_fire(n_intervals):
-    # Once the interval fires once (n_intervals=1), disable it again
-    if n_intervals and n_intervals > 0:
-        return True
-    return dash.no_update
+def force_graph_resize(n):
+    return {"display": "block", "opacity": 1}
 
 if __name__ == '__main__':
     app.run_server(debug=True)
-
-
-
 
