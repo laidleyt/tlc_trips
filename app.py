@@ -307,6 +307,7 @@ def update_graph(data_type, group_var, show_graph_flag):
     Output("interactive-graph", "style"),
     Output("about-text", "style"),
     Output("resize-interval", "disabled"),
+    Output("graph-wrapper", "style"),
     Input("toggle-about-btn", "n_clicks"),
     State("toggle-about-btn", "children"),
     prevent_initial_call=True,
@@ -314,11 +315,27 @@ def update_graph(data_type, group_var, show_graph_flag):
 )
 def toggle_about(n_clicks, current_text):
     if current_text == "About":
-        # Show About, hide graph completely
-        return "Back", {"display": "none"}, {"display": "block"}, True
+        return (
+            "Back",
+            {"display": "none"},
+            {"display": "block"},
+            True,
+            {"height": "0", "overflow": "hidden", "padding": "0", "margin": "0"}
+        )
     else:
-        # Show graph, hide About and trigger resize interval
-        return "About", {"display": "block"}, {"display": "none"}, False
+        return (
+            "About",
+            {"display": "block"},
+            {"display": "none"},
+            False,
+            {
+                'overflowX': 'auto',
+                'width': '80vw',
+                'padding': '1rem',
+                'boxSizing': 'border-box',
+                'marginTop': '7rem'
+            }
+        )
 
 
 @app.callback(
@@ -326,6 +343,16 @@ def toggle_about(n_clicks, current_text):
     Input("resize-interval", "n_intervals"),
     prevent_initial_call=True
 )
+
+@app.callback(
+    Output('subhead-text', 'children'),
+    Input('data-select', 'value')
+)
+def update_subhead(data_type):
+    if data_type == 'mileage':
+        return ["Manhattan Yellow Cabs,", html.Br(), "2017–2024"]
+    else:
+        return ["Manhattan Yellow Cabs,", html.Br(), "2011–2024"]
 def force_graph_resize(n):
     return {"display": "block"}
 
