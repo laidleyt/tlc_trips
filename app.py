@@ -346,28 +346,27 @@ def toggle_about(n_clicks, current_text):
         return (
             "Back",
             {
-                'display': 'block',
-                'opacity': 1,
-                'minWidth': '100%',
-                'transition': 'opacity 0.4s ease-in-out'
-            },
-            {'display': 'block'},  # about text shown normally
-            True,  # disable interval during About to avoid resize noise
-        )
-    else:
-        return (
-            "About",
-            {
-                'display': 'none',
+                'display': 'none',          # Hide graph when About text is showing
                 'pointerEvents': 'none',
                 'height': '0px',
                 'minWidth': '100%',
                 'transition': 'opacity 0.4s ease-in-out'
             },
-            {'display': 'none'},
-            False,  # enable interval to trigger resize event once
+            {'display': 'block'},          # Show About text
+            True,                         # Disable interval during About
         )
-
+    else:
+        return (
+            "About",
+            {
+                'display': 'block',          # Show graph when About text hidden
+                'opacity': 1,
+                'minWidth': '100%',
+                'transition': 'opacity 0.4s ease-in-out'
+            },
+            {'display': 'none'},          # Hide About text
+            False,                        # Enable interval to trigger resize event once
+        )
 
 @app.callback(
     Output('subhead-text', 'children'),
