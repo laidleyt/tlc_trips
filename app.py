@@ -324,8 +324,8 @@ def toggle_about(n_clicks, current_text):
         return (
             "Back",
             {
-                'visibility': 'hidden',
-                'opacity': 0,
+                'display': 'block',
+                'opacity': 1,
                 'height': '400px',
                 'minWidth': '100%',
                 'transition': 'opacity 0.4s ease-in-out'
@@ -337,8 +337,8 @@ def toggle_about(n_clicks, current_text):
         return (
             "About",
             {
-                'visibility': 'visible',
-                'opacity': 1,
+                'display': 'none',
+                'opacity': 0,
                 'height': '400px',
                 'minWidth': '100%',
                 'transition': 'opacity 0.4s ease-in-out'
