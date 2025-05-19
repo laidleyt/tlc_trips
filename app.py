@@ -182,7 +182,6 @@ app.layout = dbc.Container([
                     id='interactive-graph',
                     style={
                         'minWidth': '100%',
-                        'height': '400px',
                         'display': 'block'
                     },
                     config={'responsive': True}
@@ -326,7 +325,6 @@ def toggle_about(n_clicks, current_text):
             {
                 'display': 'block',
                 'opacity': 1,
-                'height': '400px',
                 'minWidth': '100%',
                 'transition': 'opacity 0.4s ease-in-out'
             },
@@ -338,8 +336,8 @@ def toggle_about(n_clicks, current_text):
             "About",
             {
                 'display': 'none',
-                'opacity': 0,
-                'height': '400px',
+                'pointerEvents': 'none',
+                'height': '0px',
                 'minWidth': '100%',
                 'transition': 'opacity 0.4s ease-in-out'
             },
