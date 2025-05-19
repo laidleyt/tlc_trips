@@ -289,7 +289,8 @@ app.layout = dbc.Container([
     [Output('interactive-graph', 'figure'),
      Output('subhead-text', 'children')],
     [Input('data-select', 'value'),
-     Input('graph-type', 'value')]
+     Input('graph-type', 'value')],
+    prevent_initial_call=False
 )
 def update_graph_and_subhead(selected_data, selected_graph):
     if selected_data == 'fares':
