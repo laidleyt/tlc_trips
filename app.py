@@ -200,25 +200,25 @@ app.layout = dbc.Container([
             },
             children=[
                 html.P("Thanks for visiting. To create this dashboard, I began by downloading the full time series "
-                       "of individual yellow cab trips from 2011–2025 in parquet file format.", style={'marginBottom':'0.5rem'}),
+                       "of individual yellow cab trips from 2011–2025 in parquet file format.", style={'marginBottom':'0.1rem'}),
                 html.P([
                     "You can access these files on the TLC’s official site here: ",
                     html.A("TLC Trip Data", href="https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page", target="_blank")
-                ], style={'marginBottom':'0.5rem'}),
-                html.P("From there, I used DuckDB in Python (also available for R) to query the parquet files, pull relevant variables, "
-                       "and summarize the daily totals in revenue and mileage.", style={'marginBottom':'0.5rem'}),
-                html.P("Because the total dataset contains over a billion rows and ~30GB even in Parquet, conventional tools like pandas are "
+                ], style={'marginBottom':'0.1rem'}),
+                html.P("From there, I used DuckDB (pip install duckdb; in R: install.packages("duckdb"); and I believe it's being integrated into SAS summer of 2025) to query the parquet files using SQL, pull relevant variables, "
+                       "and summarize the daily totals in revenue and mileage.", style={'marginBottom':'0.1rem'}),
+                html.P("Because the total dataset contains over a billion rows (and over 100GB uncompressed), conventional tools like pandas in Python are "
                        "inefficient or even unusable. DuckDB uses SQL syntax and avoids reading full datasets into memory.", style={'marginBottom':'0.5rem'}),
-                html.P("I highly recommend DuckDB — it functions as a kind of 'mini data warehouse', even for small business use.", style={'marginBottom':'0.5rem'}),
-                html.P("The visualizations were created with Plotly and embedded here using Plotly Dash.", style={'marginBottom':'0.5rem'}),
+                html.P("I highly recommend DuckDB — it can even function as a viable component in building a kind of 'mini data warehouse' for smaller businesses that are not churning terabytes of data on a regular basis.", style={'marginBottom':'0.5rem'}),
+                html.P("The visualizations were created with Plotly and embedded here using Plotly Dash.", style={'marginBottom':'0.1rem'}),
                 html.P([
                     "GitHub code is available here: ",
                     html.A("GitHub Repo", href="https://github.com/laidleyt/tlc_trips", target="_blank")
-                ], style={'marginBottom':'0.5rem'}),
+                ], style={'marginBottom':'0.1rem'}),
                 html.P([
-                    "Feel free to connect on LinkedIn: ",
+                    "Feel free to connect on LinkedIn if you have questions about this, or would like some elaboration on the front end parquet ingestion/calculations: ",
                     html.A("Tom Laidley", href="https://linkedin.com/in/tomlaidley", target="_blank")
-                ], style={'marginBottom':'0.5rem'}),
+                ], style={'marginBottom':'0.1rem'}),
                 html.P("Thanks!", style={'marginBottom':'0'})
             ]
         ),
