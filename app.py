@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Sat May 17 09:20:14 2025
+
+"""
+
 import os
 import pandas as pd
 import plotly.express as px
@@ -6,9 +12,99 @@ from dash import Dash, html, dcc
 import dash_bootstrap_components as dbc
 from dash import Input, Output, State
 
-# ... your data loading and create_area_chart function stay the same ...
 
-# (omitted for brevity: all your existing data prep and fig creation)
+df2 = pd.read_csv('data/tlc_data.csv')  # read in summarized time series data
+
+# create plot function, plot each rev/mileage/category combo
+
+def create_area_chart(df, metric, var, facet_wrap, title, y_label, vlines=[]):
+    filtered_df = df[df['var'] == var]
+
+    fig = px.area(
+        filtered_df,
+        x='dyear',
+        y=metric,
+        color='group',
+        facet_col='group',
+        facet_col_wrap=facet_wrap
+    )
+
+    for line in vlines:
+        fig.add_vline(
+            x=datetime.strptime(line['date'], "%Y-%m-%d").timestamp() * 1000,
+            line_color=line['color'],
+            line_width=3,
+            line_dash=line.get('dash', None),
+            annotation_text=line['label']
+        )
+
+    fig.update_layout(
+        title=title,
+        xaxis_title="Date",
+        yaxis_title=y_label
+    )
+
+    for axis in fig.layout:
+        if axis.startswith('yaxis'):
+            fig.layout[axis].title.text = y_label
+
+    return fig
+
+# Set up vlines
+vlines_fares = [
+    {"date": "2011-05-04", "color": "black", "dash": "dash", "label": "Uber Intro'd<br>NYC"},
+    {"date": "2020-03-13", "color": "#39FF14", "label": "COVID-19 Declared <br> Natl Emergency"}
+]
+
+vlines_mileage = [
+    {"date": "2020-03-13", "color": "#39FF14", "label": "COVID-19 Declared <br> Natl Emergency"}
+]
+
+# Filtered mileage DF
+startmile = '2017-01-01'
+endmile = '2024-12-31'
+dfmile = df2[(df2['dyear'] >= startmile) & (df2['dyear'] <= endmile)]
+
+# Fares
+fig_fares_paytype = create_area_chart(df2, 'daily_fare', 'paytype', facet_wrap=1,
+    title="Daily Yellow Cab Fares, 2011-2024 <br> In 2025 US Dollars",
+    y_label="Millions of USD",
+    vlines=vlines_fares
+)
+
+fig_fares_ratecode = create_area_chart(df2, 'daily_fare', 'ratecode', facet_wrap=2,
+    title="Daily Yellow Cab Fares, 2011-2024 <br> In 2025 US Dollars",
+    y_label="Millions of USD",
+    vlines=vlines_fares
+)
+
+fig_fares_vendorid = create_area_chart(df2, 'daily_fare', 'vendorid', facet_wrap=1,
+    title="Daily Yellow Cab Fares, 2011-2024 <br> In 2025 US Dollars",
+    y_label="Millions of USD",
+    vlines=vlines_fares
+)
+
+# Mileage
+fig_mileage_paytype = create_area_chart(dfmile, 'daily_miles', 'paytype', facet_wrap=1,
+    title="Daily Yellow Cab Mileage, 2017-2024",
+    y_label="Miles Traveled",
+    vlines=vlines_mileage
+)
+
+fig_mileage_ratecode = create_area_chart(dfmile, 'daily_miles', 'ratecode', facet_wrap=2,
+    title="Daily Yellow Cab Mileage, 2017-2024",
+    y_label="Miles Traveled",
+    vlines=vlines_mileage
+)
+
+fig_mileage_vendorid = create_area_chart(dfmile, 'daily_miles', 'vendorid', facet_wrap=1,
+    title="Daily Yellow Cab Mileage, 2017-2024",
+    y_label="Miles Traveled",
+    vlines=vlines_mileage
+)
+
+
+################################################################################################# create dashboard & integrate figures
 
 app = Dash(__name__, external_stylesheets=[dbc.themes.FLATLY])
 
@@ -226,3 +322,22 @@ server = app.server
 
 if __name__ == "__main__":
     app.run(debug=True, port=8050)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
