@@ -210,9 +210,9 @@ app.layout = dbc.Container([
                 html.P("From there, I used DuckDB in Python (also available in R, and coming to SAS summer '25 I believe) to query " 
                        "the parquet files using conventional SQL syntax, pull relevant variables, "
                        "and summarize the daily totals in revenue and mileage.", style={'marginBottom':'0.1rem'}),
-                html.P("Because the total dataset contains over a billion rows (and over 100GB uncompressed), conventional tools like pandas in Python are "
+                html.P("Because the total dataset contains over a billion rows (and is over 100GB uncompressed), conventional tools like pandas in Python are "
                        "inefficient or even unusable. DuckDB avoids reading full datasets into memory.", style={'marginBottom':'0.1rem'}),
-                html.P("I highly recommend DuckDB — it can even function as a viable component in building a kind of 'mini data warehouse' for smaller" 
+                html.P("I highly recommend DuckDB — it can even function as a viable component in building a kind of 'mini data warehouse' for smaller " 
                        "businesses that are not churning through terabytes of data on a regular basis.", style={'marginBottom':'0.1rem'}),
                 html.P("The visualizations were created with Plotly and embedded here using Plotly Dash.", style={'marginBottom':'0.1rem'}),
                 html.P([
