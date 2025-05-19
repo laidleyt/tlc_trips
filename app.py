@@ -194,7 +194,7 @@ app.layout = dbc.Container([
                             id='interactive-graph',
                             style={
                                 'minWidth': '600px',
-                                'height': '600px',
+                                'height': '400px',
                                 'width': '100%'
                             },
                             config={'responsive': True}
@@ -293,6 +293,7 @@ app.layout = dbc.Container([
     prevent_initial_call=False
 )
 def update_graph_and_subhead(selected_data, selected_graph):
+    # Determine figure based on selection
     if selected_data == 'fares':
         if selected_graph == 'paytype':
             fig = fig_fares_paytype
@@ -301,6 +302,7 @@ def update_graph_and_subhead(selected_data, selected_graph):
         elif selected_graph == 'ratecode':
             fig = fig_fares_ratecode
         subhead = ["Manhattan Yellow Cabs,", html.Br(), "2011–2024"]
+        y_label = "Millions of USD"
     elif selected_data == 'mileage':
         if selected_graph == 'paytype':
             fig = fig_mileage_paytype
@@ -309,9 +311,16 @@ def update_graph_and_subhead(selected_data, selected_graph):
         elif selected_graph == 'ratecode':
             fig = fig_mileage_ratecode
         subhead = ["Manhattan Yellow Cabs,", html.Br(), "2017–2024"]
+        y_label = "Miles Traveled"
     else:
         fig = px.scatter(title="Unknown selection")
         subhead = "Manhattan Yellow Cabs"
+        y_label = ""
+
+    # Apply y-axis label across all facets
+    for axis in fig.layout:
+        if axis.startswith("yaxis"):
+            fig.layout[axis].title.text = y_label
 
     return fig, subhead
 
