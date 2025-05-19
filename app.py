@@ -307,7 +307,6 @@ def update_graph(data_type, group_var, show_graph_flag):
     Output("interactive-graph", "style"),
     Output("about-text", "style"),
     Output("resize-interval", "disabled"),
-    Output("graph-wrapper", "style"),
     Input("toggle-about-btn", "n_clicks"),
     State("toggle-about-btn", "children"),
     prevent_initial_call=True,
